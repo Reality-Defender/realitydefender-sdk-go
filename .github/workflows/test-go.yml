@@ -3,12 +3,8 @@ name: Test Go SDK
 on:
   push:
     branches: [ main ]
-    paths:
-      - 'go/**'
   pull_request:
     branches: [ main ]
-    paths:
-      - 'go/**'
 
 jobs:
   test-go-sdk:
