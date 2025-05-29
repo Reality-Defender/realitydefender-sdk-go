@@ -1,5 +1,6 @@
 # Reality Defender Go SDK
-[![codecov](https://codecov.io/gh/Reality-Defender/eng-sdk/graph/badge.svg?flag=go&token=P98RNVB21M)](https://codecov.io/gh/Reality-Defender/eng-sdk)
+
+[![codecov](https://codecov.io/gh/Reality-Defender/realitydefender-sdk-go/graph/badge.svg?token=TQZSGX3R7Z)](https://codecov.io/gh/Reality-Defender/realitydefender-sdk-go)
 
 Go client library for the Reality Defender API for deepfake detection and media manipulation analysis.
 
