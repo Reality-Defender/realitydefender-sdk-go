@@ -26,3 +26,5 @@ Cargo.lock
 **/Cargo.lock
 
 cobertura.xml
+
+examples/images/*.jpg
