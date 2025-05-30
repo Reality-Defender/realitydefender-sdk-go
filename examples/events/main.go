@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Reality-Defender/eng-sdk/go/src/realitydefender"
+	"github.com/Reality-Defender/realitydefender-sdk-go/src/realitydefender"
 )
 
 func formatScore(score *float64) string {

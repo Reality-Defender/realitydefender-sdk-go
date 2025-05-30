@@ -7,7 +7,7 @@ Go client library for the Reality Defender API for deepfake detection and media 
 ## Installation
 
 ```bash
-go get github.com/Reality-Defender/eng-sdk/go/src/realitydefender
+go get github.com/Reality-Defender/realitydefender-sdk-go
 ```
 
 ## Usage
@@ -23,7 +23,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/Reality-Defender/eng-sdk/go/src/realitydefender"
+	"github.com/Reality-Defender/realitydefender-sdk-go"
 )
 
 func main() {
@@ -79,7 +79,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Reality-Defender/eng-sdk/go/src/realitydefender"
+	"github.com/Reality-Defender/realitydefender-sdk-go"
 )
 
 func main() {

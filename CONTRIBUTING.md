@@ -24,7 +24,7 @@ We expect all contributors to adhere to the highest standards of respect and inc
 
 1. Fork the repository
 2. Clone your fork: `git clone https://github.com/YOUR-USERNAME/eng-sdk.git`
-3. Add the upstream repository: `git remote add upstream https://github.com/Reality-Defender/eng-sdk.git`
+3. Add the upstream repository: `git remote add upstream https://github.com/Reality-Defender/realitydefender-sdk-go.git`
 4. Create a new branch for your work: `git checkout -b feature/your-feature-name`
 
 ## Development Workflow

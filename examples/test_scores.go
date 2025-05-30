@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/Reality-Defender/eng-sdk/go/src/realitydefender"
+	"github.com/Reality-Defender/realitydefender-sdk-go/src/realitydefender"
 )
 
 // Sample JSON response matching the API structure

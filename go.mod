@@ -1,4 +1,4 @@
-module github.com/Reality-Defender/eng-sdk/go
+module github.com/Reality-Defender/realitydefender-sdk-go
 
 go 1.23.0
 

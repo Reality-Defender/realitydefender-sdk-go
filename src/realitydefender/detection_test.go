@@ -8,7 +8,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/Reality-Defender/eng-sdk/go/src/realitydefender"
+	"github.com/Reality-Defender/realitydefender-sdk-go/src/realitydefender"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
