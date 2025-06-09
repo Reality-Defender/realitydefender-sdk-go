@@ -60,8 +60,13 @@ func getSignedURL(ctx context.Context, client *httpClient, fileName string) (*Si
 
 	// Get signed URL
 	responseData, err := client.post(ctx, signedURLEndpoint, payload)
+
 	if err != nil {
+
 		return nil, err
+
+
+
 	}
 
 	// Parse the response

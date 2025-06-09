@@ -1,0 +1,49 @@
+name: Build and publish Go SDK
+on:
+  workflow_call:
+    inputs:
+      is-release:
+        default: false
+        type: boolean
+        description: Whether this is a release package ready to be published or not.
+
+  workflow_dispatch:
+    inputs:
+      is-release:
+        default: false
+        type: boolean
+        description: Whether this is a release package ready to be published or not.
+
+jobs:
+  build-publish-go-sdk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get tag version
+        run: |
+          echo "SDK_VERSION=$(git describe --tags --abbrev=0 | cut -c2-)" >> $GITHUB_ENV
+
+      - name: Install SSH key
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.DEPLOY_KEY }}
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.23'
+
+      - name: Install dependencies
+        run: go mod download
+
+      - name: Build package
+        run: go build -v ./...
+
+      - name: Publish
+        if: ${{ inputs.is_release == 'true' }}
+        run: |
+          # Force the Go proxy to recognize the new version
+          GOPROXY=proxy.golang.org go list -m github.com/Reality-Defender/realitydefender-sdk-go@${{ env.SDK_VERSION }}
+
+
