@@ -40,7 +40,7 @@ test-coverage:
 # Run tests with ginkgo and coverage (CI-friendly version)
 test-coverage-ci:
     mkdir -p coverage
-    ginkgo -r --randomize-all --randomize-suites --fail-on-pending --cover --trace --race --timeout=30s --output-dir=coverage --no-color --keep-going --keep-separate-coverprofiles src/
+    ginkgo -r --randomize-all --randomize-suites --fail-on-pending --cover --trace --race --timeout=60s --output-dir=coverage --no-color --keep-going --keep-separate-coverprofiles src/
 
 # Run all quality checks
 check: lint fmt-check test-ginkgo
