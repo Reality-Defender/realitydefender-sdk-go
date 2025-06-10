@@ -41,7 +41,7 @@ jobs:
         run: go build -v ./...
 
       - name: Publish
-        if: ${{ inputs.is_release == 'true' }}
+        if: ${{ inputs.is-release == true }}
         run: |
           # Force the Go proxy to recognize the new version
           GOPROXY=proxy.golang.org go list -m github.com/Reality-Defender/realitydefender-sdk-go@${{ env.SDK_VERSION }}
