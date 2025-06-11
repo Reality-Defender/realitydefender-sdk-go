@@ -10,8 +10,6 @@ Go client library for the Reality Defender API for deepfake detection and media 
 go get github.com/Reality-Defender/realitydefender-sdk-go
 ```
 
-## Usage
-
 ### Basic Example
 
 ```go
@@ -198,15 +196,4 @@ result, err := client.DetectFile(ctx, "./path/to/file.jpg")
 
 ## Development
 
-### Running Tests
-
-```bash
-go test ./src/realitydefender/...
-```
-
-### Running Tests with Ginkgo
-
-```bash
-cd go
-ginkgo -r src/
-``` 
+The included `Justfile` has all the shortcuts needed to build the module, run tests, examples, etc.  

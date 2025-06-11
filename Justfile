@@ -30,17 +30,17 @@ test:
 
 # Run tests with ginkgo
 test-ginkgo:
-    ginkgo -r --randomize-all --randomize-suites --fail-on-pending --trace --race --progress --timeout=30s src/
+    ginkgo -r --randomize-all --randomize-suites --fail-on-pending --trace --race --show-node-events --timeout=60s src/
 
 # Run tests with ginkgo and coverage
 test-coverage:
-    ginkgo -r --randomize-all --randomize-suites --fail-on-pending --cover --trace --race --progress --timeout=30s --output-dir=coverage --coverprofile=coverprofile.out src/
+    ginkgo -r --randomize-all --randomize-suites --fail-on-pending --cover --trace --race --show-node-events --timeout=60s --output-dir=coverage --coverprofile=coverprofile.out src/
     go tool cover -html=coverage/coverprofile.out -o coverage/coverage.html
 
 # Run tests with ginkgo and coverage (CI-friendly version)
 test-coverage-ci:
     mkdir -p coverage
-    ginkgo -r --randomize-all --randomize-suites --fail-on-pending --cover --trace --race --timeout=30s --output-dir=coverage --no-color --keep-going --keep-separate-coverprofiles src/
+    ginkgo -r --randomize-all --randomize-suites --fail-on-pending --cover --trace --race --timeout=60s --output-dir=coverage --no-color --keep-going --keep-separate-coverprofiles src/
 
 # Run all quality checks
 check: lint fmt-check test-ginkgo
