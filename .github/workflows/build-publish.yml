@@ -6,6 +6,9 @@ on:
         default: false
         type: boolean
         description: Whether this is a release package ready to be published or not.
+    secrets:
+      deploy-key:
+        required: false
 
   workflow_dispatch:
     inputs:
@@ -29,7 +32,7 @@ jobs:
       - name: Install SSH key
         uses: webfactory/ssh-agent@v0.7.0
         with:
-          ssh-private-key: ${{ secrets.DEPLOY_KEY }}
+          ssh-private-key: ${{ secrets.deploy-key }}
 
       - name: Set up Go
         uses: actions/setup-go@v4
