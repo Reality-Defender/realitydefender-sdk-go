@@ -21,7 +21,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/Reality-Defender/realitydefender-sdk-go"
+	"github.com/Reality-Defender/realitydefender-sdk-go/src/realitydefender"
 )
 
 func main() {
@@ -77,7 +77,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Reality-Defender/realitydefender-sdk-go"
+	"github.com/Reality-Defender/realitydefender-sdk-go/src/realitydefender"
 )
 
 func main() {
