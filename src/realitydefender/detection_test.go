@@ -59,7 +59,7 @@ var _ = Describe("Detection Functions", func() {
 					},
 					{
 						"name": "model2",
-						"status": "FAKE",
+						"status": "AUTHENTIC",
 						"finalScore": 35.8,
 						"data": null
 					}
