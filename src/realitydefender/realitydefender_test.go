@@ -156,7 +156,7 @@ var _ = Describe("RealityDefender SDK", func() {
 					"mediaType": "image",
 					"overallStatus": "complete",
 					"resultsSummary": {
-						"status": "MANIPULATED",
+						"status": "FAKE",
 						"metadata": {
 							"finalScore": 0.95
 						}
@@ -164,7 +164,7 @@ var _ = Describe("RealityDefender SDK", func() {
 					"models": [
 						{
 							"name": "test-model",
-							"status": "MANIPULATED",
+							"status": "FAKE",
 							"finalScore": 0.95
 						}
 					]
@@ -217,7 +217,7 @@ var _ = Describe("RealityDefender SDK", func() {
 				w.WriteHeader(http.StatusOK)
 				w.Write([]byte(`{
 					"resultsSummary": {
-						"status": "MANIPULATED",
+						"status": "FAKE",
 						"metadata": {
 							"finalScore": 0.95
 						}
@@ -225,7 +225,7 @@ var _ = Describe("RealityDefender SDK", func() {
 					"models": [
 						{
 							"name": "test-model",
-							"status": "MANIPULATED",
+							"status": "FAKE",
 							"finalScore": 0.95
 						}
 					]
@@ -380,7 +380,7 @@ var _ = Describe("RealityDefender SDK", func() {
 						"mediaType": "image",
 						"overallStatus": "complete",
 						"resultsSummary": {
-							"status": "MANIPULATED",
+							"status": "FAKE",
 							"metadata": {
 								"finalScore": 0.95
 							}
@@ -388,7 +388,7 @@ var _ = Describe("RealityDefender SDK", func() {
 						"models": [
 							{
 								"name": "test-model",
-								"status": "MANIPULATED",
+								"status": "FAKE",
 								"finalScore": 0.95
 							}
 						]
@@ -535,7 +535,7 @@ var _ = Describe("RealityDefender SDK", func() {
 					"mediaType": "image",
 					"overallStatus": "complete",
 					"resultsSummary": {
-						"status": "MANIPULATED",
+						"status": "FAKE",
 						"metadata": {
 							"finalScore": 95
 						}
@@ -543,7 +543,7 @@ var _ = Describe("RealityDefender SDK", func() {
 					"models": [
 						{
 							"name": "model1",
-							"status": "MANIPULATED",
+							"status": "FAKE",
 							"finalScore": 95
 						}
 					]
@@ -618,7 +618,7 @@ var _ = Describe("RealityDefender SDK", func() {
 					"mediaType": "image",
 					"overallStatus": "complete",
 					"resultsSummary": {
-						"status": "MANIPULATED",
+						"status": "FAKE",
 						"metadata": {
 							"finalScore": 95
 						}
@@ -626,7 +626,7 @@ var _ = Describe("RealityDefender SDK", func() {
 					"models": [
 						{
 							"name": "model1",
-							"status": "MANIPULATED",
+							"status": "FAKE",
 							"finalScore": 95
 						}
 					]
@@ -714,7 +714,7 @@ var _ = Describe("RealityDefender SDK", func() {
 						"mediaType": "image",
 						"overallStatus": "complete",
 						"resultsSummary": {
-							"status": "MANIPULATED",
+							"status": "FAKE",
 							"metadata": {
 								"finalScore": 95
 							}
@@ -722,7 +722,7 @@ var _ = Describe("RealityDefender SDK", func() {
 						"models": [
 							{
 								"name": "model1",
-								"status": "MANIPULATED",
+								"status": "FAKE",
 								"finalScore": 95
 							}
 						]

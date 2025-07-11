@@ -45,7 +45,7 @@ var _ = Describe("Detection Functions", func() {
 				"mediaType": "image",
 				"overallStatus": "analyzed",
 				"resultsSummary": {
-					"status": "MANIPULATED",
+					"status": "FAKE",
 					"metadata": {
 						"finalScore": 87.5
 					}
@@ -53,13 +53,13 @@ var _ = Describe("Detection Functions", func() {
 				"models": [
 					{
 						"name": "model1",
-						"status": "MANIPULATED",
+						"status": "FAKE",
 						"finalScore": 90.2,
 						"data": null
 					},
 					{
 						"name": "model2",
-						"status": "AUTHENTIC",
+						"status": "FAKE",
 						"finalScore": 35.8,
 						"data": null
 					}
@@ -114,7 +114,7 @@ var _ = Describe("Detection Functions", func() {
 					},
 					{
 						"name": "model2",
-						"status": "MANIPULATED",
+						"status": "FAKE",
 						"finalScore": 0.92,
 						"data": null
 					}
@@ -255,7 +255,7 @@ var _ = Describe("Detection Functions", func() {
 					w.Write([]byte(`{
 						"overallStatus": "complete",
 						"resultsSummary": {
-							"status": "MANIPULATED",
+							"status": "FAKE",
 							"metadata": {
 								"finalScore": 0.95
 							}
@@ -263,7 +263,7 @@ var _ = Describe("Detection Functions", func() {
 						"models": [
 							{
 								"name": "test-model",
-								"status": "MANIPULATED",
+								"status": "FAKE",
 								"finalScore": 0.95
 							}
 						]
