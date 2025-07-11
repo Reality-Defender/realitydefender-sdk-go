@@ -144,9 +144,9 @@ func FormatResult(response *MediaResponse) *DetectionResult {
 	// Extract the overall status and score
 	status := response.ResultsSummary.Status
 
-	// Replace FAKE with ARTIFICIAL
+	// Replace FAKE with MANIPULATED
 	if status == "FAKE" {
-		status = "ARTIFICIAL"
+		status = "MANIPULATED"
 	}
 
 	// Normalize score from 0-100 to 0-1 if needed
@@ -174,10 +174,10 @@ func FormatResult(response *MediaResponse) *DetectionResult {
 			modelScore = &normalizedModelScore
 		}
 
-		// Replace FAKE with ARTIFICIAL in model status
+		// Replace FAKE with MANIPULATED in model status
 		modelStatus := model.Status
 		if modelStatus == "FAKE" {
-			modelStatus = "ARTIFICIAL"
+			modelStatus = "MANIPULATED"
 		}
 
 		models = append(models, ModelResult{

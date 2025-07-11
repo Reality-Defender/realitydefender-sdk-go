@@ -42,7 +42,7 @@ type ModelResult struct {
 
 // DetectionResult represents the simplified detection result returned to the user
 type DetectionResult struct {
-	// Status is the overall status determination (e.g., "ARTIFICIAL", "AUTHENTIC")
+	// Status is the overall status determination (e.g., "MANIPULATED", "AUTHENTIC")
 	Status string `json:"status"`
 	// Score is the confidence score (0-1, nil if processing)
 	Score *float64 `json:"score"`
