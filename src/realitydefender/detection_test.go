@@ -45,7 +45,7 @@ var _ = Describe("Detection Functions", func() {
 				"mediaType": "image",
 				"overallStatus": "analyzed",
 				"resultsSummary": {
-					"status": "ARTIFICIAL",
+					"status": "MANIPULATED",
 					"metadata": {
 						"finalScore": 87.5
 					}
@@ -53,7 +53,7 @@ var _ = Describe("Detection Functions", func() {
 				"models": [
 					{
 						"name": "model1",
-						"status": "ARTIFICIAL",
+						"status": "MANIPULATED",
 						"finalScore": 90.2,
 						"data": null
 					},
@@ -74,13 +74,13 @@ var _ = Describe("Detection Functions", func() {
 			result := realitydefender.FormatResult(&mediaResponse)
 
 			// Verify the result
-			Expect(result.Status).To(Equal("ARTIFICIAL"))
+			Expect(result.Status).To(Equal("MANIPULATED"))
 			Expect(*result.Score).To(BeNumerically("~", 0.875, 0.001))
 			Expect(len(result.Models)).To(Equal(2))
 
 			// Check first model
 			Expect(result.Models[0].Name).To(Equal("model1"))
-			Expect(result.Models[0].Status).To(Equal("ARTIFICIAL"))
+			Expect(result.Models[0].Status).To(Equal("MANIPULATED"))
 			Expect(*result.Models[0].Score).To(BeNumerically("~", 0.902, 0.001))
 
 			// Check second model
@@ -114,7 +114,7 @@ var _ = Describe("Detection Functions", func() {
 					},
 					{
 						"name": "model2",
-						"status": "ARTIFICIAL",
+						"status": "MANIPULATED",
 						"finalScore": 0.92,
 						"data": null
 					}
@@ -140,7 +140,7 @@ var _ = Describe("Detection Functions", func() {
 
 			// Check second model
 			Expect(result.Models[1].Name).To(Equal("model2"))
-			Expect(result.Models[1].Status).To(Equal("ARTIFICIAL"))
+			Expect(result.Models[1].Status).To(Equal("MANIPULATED"))
 			Expect(*result.Models[1].Score).To(BeNumerically("~", 0.92, 0.001))
 		})
 
@@ -255,7 +255,7 @@ var _ = Describe("Detection Functions", func() {
 					w.Write([]byte(`{
 						"overallStatus": "complete",
 						"resultsSummary": {
-							"status": "ARTIFICIAL",
+							"status": "MANIPULATED",
 							"metadata": {
 								"finalScore": 0.95
 							}
@@ -263,7 +263,7 @@ var _ = Describe("Detection Functions", func() {
 						"models": [
 							{
 								"name": "test-model",
-								"status": "ARTIFICIAL",
+								"status": "MANIPULATED",
 								"finalScore": 0.95
 							}
 						]
@@ -291,7 +291,7 @@ var _ = Describe("Detection Functions", func() {
 			result, err := client.GetResult(ctx, "test-request-id", options)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(result).NotTo(BeNil())
-			Expect(result.Status).To(Equal("ARTIFICIAL"))
+			Expect(result.Status).To(Equal("MANIPULATED"))
 			Expect(*result.Score).To(Equal(0.95))
 
 			// Verify we made exactly 3 requests (2 processing + 1 completed)

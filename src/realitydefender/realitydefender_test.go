@@ -156,7 +156,7 @@ var _ = Describe("RealityDefender SDK", func() {
 					"mediaType": "image",
 					"overallStatus": "complete",
 					"resultsSummary": {
-						"status": "ARTIFICIAL",
+						"status": "MANIPULATED",
 						"metadata": {
 							"finalScore": 0.95
 						}
@@ -164,7 +164,7 @@ var _ = Describe("RealityDefender SDK", func() {
 					"models": [
 						{
 							"name": "test-model",
-							"status": "ARTIFICIAL",
+							"status": "MANIPULATED",
 							"finalScore": 0.95
 						}
 					]
@@ -184,11 +184,11 @@ var _ = Describe("RealityDefender SDK", func() {
 			result, err := client.GetResult(ctx, "test-request-id", nil)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(result).NotTo(BeNil())
-			Expect(result.Status).To(Equal("ARTIFICIAL"))
+			Expect(result.Status).To(Equal("MANIPULATED"))
 			Expect(*result.Score).To(Equal(0.95))
 			Expect(result.Models).To(HaveLen(1))
 			Expect(result.Models[0].Name).To(Equal("test-model"))
-			Expect(result.Models[0].Status).To(Equal("ARTIFICIAL"))
+			Expect(result.Models[0].Status).To(Equal("MANIPULATED"))
 			Expect(*result.Models[0].Score).To(Equal(0.95))
 		})
 	})
@@ -217,7 +217,7 @@ var _ = Describe("RealityDefender SDK", func() {
 				w.WriteHeader(http.StatusOK)
 				w.Write([]byte(`{
 					"resultsSummary": {
-						"status": "ARTIFICIAL",
+						"status": "MANIPULATED",
 						"metadata": {
 							"finalScore": 0.95
 						}
@@ -225,7 +225,7 @@ var _ = Describe("RealityDefender SDK", func() {
 					"models": [
 						{
 							"name": "test-model",
-							"status": "ARTIFICIAL",
+							"status": "MANIPULATED",
 							"finalScore": 0.95
 						}
 					]
@@ -258,7 +258,7 @@ var _ = Describe("RealityDefender SDK", func() {
 			result, err := client.DetectFile(ctx, filePath)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(result).NotTo(BeNil())
-			Expect(result.Status).To(Equal("ARTIFICIAL"))
+			Expect(result.Status).To(Equal("MANIPULATED"))
 			Expect(*result.Score).To(Equal(0.95))
 		})
 	})
@@ -346,7 +346,7 @@ var _ = Describe("RealityDefender SDK", func() {
 			mux := http.NewServeMux()
 			server = httptest.NewServer(mux)
 
-			// Handle result with initial ANALYZING status, then ARTIFICIAL status
+			// Handle result with initial ANALYZING status, then MANIPULATED status
 			mux.HandleFunc("/api/media/users/test-request-id", func(w http.ResponseWriter, r *http.Request) {
 				Expect(r.Method).To(Equal("GET"))
 
@@ -380,7 +380,7 @@ var _ = Describe("RealityDefender SDK", func() {
 						"mediaType": "image",
 						"overallStatus": "complete",
 						"resultsSummary": {
-							"status": "ARTIFICIAL",
+							"status": "MANIPULATED",
 							"metadata": {
 								"finalScore": 0.95
 							}
@@ -388,7 +388,7 @@ var _ = Describe("RealityDefender SDK", func() {
 						"models": [
 							{
 								"name": "test-model",
-								"status": "ARTIFICIAL",
+								"status": "MANIPULATED",
 								"finalScore": 0.95
 							}
 						]
@@ -432,7 +432,7 @@ var _ = Describe("RealityDefender SDK", func() {
 			}
 
 			Expect(result).NotTo(BeNil())
-			Expect(result.Status).To(Equal("ARTIFICIAL"))
+			Expect(result.Status).To(Equal("MANIPULATED"))
 			Expect(*result.Score).To(Equal(0.95))
 		})
 
@@ -457,7 +457,7 @@ var _ = Describe("RealityDefender SDK", func() {
 			Expect(err).NotTo(HaveOccurred())
 			Expect(resultReceived).To(BeTrue())
 			Expect(resultData).NotTo(BeNil())
-			Expect(resultData.Status).To(Equal("ARTIFICIAL"))
+			Expect(resultData.Status).To(Equal("MANIPULATED"))
 			Expect(*resultData.Score).To(Equal(0.95))
 		})
 
@@ -535,7 +535,7 @@ var _ = Describe("RealityDefender SDK", func() {
 					"mediaType": "image",
 					"overallStatus": "complete",
 					"resultsSummary": {
-						"status": "ARTIFICIAL",
+						"status": "MANIPULATED",
 						"metadata": {
 							"finalScore": 95
 						}
@@ -543,7 +543,7 @@ var _ = Describe("RealityDefender SDK", func() {
 					"models": [
 						{
 							"name": "model1",
-							"status": "ARTIFICIAL",
+							"status": "MANIPULATED",
 							"finalScore": 95
 						}
 					]
@@ -587,7 +587,7 @@ var _ = Describe("RealityDefender SDK", func() {
 			// Verify the result is a DetectionResult
 			detectionResult, ok := result.(*realitydefender.DetectionResult)
 			Expect(ok).To(BeTrue())
-			Expect(detectionResult.Status).To(Equal("ARTIFICIAL"))
+			Expect(detectionResult.Status).To(Equal("MANIPULATED"))
 		})
 
 		It("handles multiple registered handlers for the same event", func() {
@@ -618,7 +618,7 @@ var _ = Describe("RealityDefender SDK", func() {
 					"mediaType": "image",
 					"overallStatus": "complete",
 					"resultsSummary": {
-						"status": "ARTIFICIAL",
+						"status": "MANIPULATED",
 						"metadata": {
 							"finalScore": 95
 						}
@@ -626,7 +626,7 @@ var _ = Describe("RealityDefender SDK", func() {
 					"models": [
 						{
 							"name": "model1",
-							"status": "ARTIFICIAL",
+							"status": "MANIPULATED",
 							"finalScore": 95
 						}
 					]
@@ -714,7 +714,7 @@ var _ = Describe("RealityDefender SDK", func() {
 						"mediaType": "image",
 						"overallStatus": "complete",
 						"resultsSummary": {
-							"status": "ARTIFICIAL",
+							"status": "MANIPULATED",
 							"metadata": {
 								"finalScore": 95
 							}
@@ -722,7 +722,7 @@ var _ = Describe("RealityDefender SDK", func() {
 						"models": [
 							{
 								"name": "model1",
-								"status": "ARTIFICIAL",
+								"status": "MANIPULATED",
 								"finalScore": 95
 							}
 						]
@@ -766,7 +766,7 @@ var _ = Describe("RealityDefender SDK", func() {
 			// Verify the result
 			detectionResult, ok := result.(*realitydefender.DetectionResult)
 			Expect(ok).To(BeTrue())
-			Expect(detectionResult.Status).To(Equal("ARTIFICIAL"))
+			Expect(detectionResult.Status).To(Equal("MANIPULATED"))
 		})
 
 		It("handles polling timeout", func() {

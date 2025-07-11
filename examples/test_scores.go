@@ -15,9 +15,9 @@ const sampleResponse = `{
   "requestId": "request-123",
   "uploadedDate": "2023-06-25T12:34:56Z",
   "mediaType": "IMAGE",
-  "overallStatus": "ARTIFICIAL",
+  "overallStatus": "MANIPULATED",
   "resultsSummary": {
-    "status": "ARTIFICIAL",
+    "status": "MANIPULATED",
     "metadata": {
       "finalScore": 0.95
     }
@@ -25,8 +25,8 @@ const sampleResponse = `{
   "models": [
     {
       "name": "model-1",
-      "data": { "score": 0.95, "decision": "ARTIFICIAL", "raw_score": 0.95 },
-      "status": "ARTIFICIAL",
+      "data": { "score": 0.95, "decision": "MANIPULATED", "raw_score": 0.95 },
+      "status": "MANIPULATED",
       "finalScore": 0.95
     },
     {
