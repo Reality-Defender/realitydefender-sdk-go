@@ -32,12 +32,12 @@ var _ = Describe("Types and Structures", func() {
 
 			// Create a test result
 			original := &realitydefender.DetectionResult{
-				Status: "ARTIFICIAL",
+				Status: "MANIPULATED",
 				Score:  &score,
 				Models: []realitydefender.ModelResult{
 					{
 						Name:   "model1",
-						Status: "ARTIFICIAL",
+						Status: "MANIPULATED",
 						Score:  &modelScore1,
 					},
 					{
