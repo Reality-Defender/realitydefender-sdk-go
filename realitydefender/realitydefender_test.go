@@ -2,6 +2,7 @@ package realitydefender_test
 
 import (
 	"context"
+	realitydefender2 "github.com/Reality-Defender/realitydefender-sdk-go/realitydefender"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -11,14 +12,12 @@ import (
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-
-	"github.com/Reality-Defender/realitydefender-sdk-go/src/realitydefender"
 )
 
 var _ = Describe("RealityDefender SDK", func() {
 	var (
 		server  *httptest.Server
-		client  *realitydefender.Client
+		client  *realitydefender2.Client
 		tempDir string
 	)
 
@@ -37,7 +36,7 @@ var _ = Describe("RealityDefender SDK", func() {
 
 	Describe("New", func() {
 		It("returns an error when API key is missing", func() {
-			client, err := realitydefender.New(realitydefender.Config{})
+			client, err := realitydefender2.New(realitydefender2.Config{})
 			Expect(err).To(HaveOccurred())
 			Expect(err.Error()).To(ContainSubstring("API key is required"))
 			Expect(client).To(BeNil())
@@ -50,7 +49,7 @@ var _ = Describe("RealityDefender SDK", func() {
 				w.Write([]byte(`{"request_id":"test-id"}`))
 			}))
 
-			client, err := realitydefender.New(realitydefender.Config{
+			client, err := realitydefender2.New(realitydefender2.Config{
 				APIKey: "test-api-key",
 			})
 			Expect(err).NotTo(HaveOccurred())
@@ -64,7 +63,7 @@ var _ = Describe("RealityDefender SDK", func() {
 				w.Write([]byte(`{"request_id":"test-id"}`))
 			}))
 
-			client, err := realitydefender.New(realitydefender.Config{
+			client, err := realitydefender2.New(realitydefender2.Config{
 				APIKey:  "test-api-key",
 				BaseURL: server.URL,
 			})
@@ -97,7 +96,7 @@ var _ = Describe("RealityDefender SDK", func() {
 			})
 
 			var err error
-			client, err = realitydefender.New(realitydefender.Config{
+			client, err = realitydefender2.New(realitydefender2.Config{
 				APIKey:  "test-api-key",
 				BaseURL: server.URL,
 			})
@@ -106,7 +105,7 @@ var _ = Describe("RealityDefender SDK", func() {
 
 		It("returns an error when file path is empty", func() {
 			ctx := context.Background()
-			result, err := client.Upload(ctx, realitydefender.UploadOptions{})
+			result, err := client.Upload(ctx, realitydefender2.UploadOptions{})
 			Expect(err).To(HaveOccurred())
 			Expect(err.Error()).To(ContainSubstring("file path is required"))
 			Expect(result).To(BeNil())
@@ -114,7 +113,7 @@ var _ = Describe("RealityDefender SDK", func() {
 
 		It("returns an error when file does not exist", func() {
 			ctx := context.Background()
-			result, err := client.Upload(ctx, realitydefender.UploadOptions{
+			result, err := client.Upload(ctx, realitydefender2.UploadOptions{
 				FilePath: "/path/to/non/existent/file.jpg",
 			})
 			Expect(err).To(HaveOccurred())
@@ -129,7 +128,7 @@ var _ = Describe("RealityDefender SDK", func() {
 			Expect(err).NotTo(HaveOccurred())
 
 			ctx := context.Background()
-			result, err := client.Upload(ctx, realitydefender.UploadOptions{
+			result, err := client.Upload(ctx, realitydefender2.UploadOptions{
 				FilePath: filePath,
 			})
 			Expect(err).NotTo(HaveOccurred())
@@ -172,7 +171,7 @@ var _ = Describe("RealityDefender SDK", func() {
 			}))
 
 			var err error
-			client, err = realitydefender.New(realitydefender.Config{
+			client, err = realitydefender2.New(realitydefender2.Config{
 				APIKey:  "test-api-key",
 				BaseURL: server.URL,
 			})
@@ -233,7 +232,7 @@ var _ = Describe("RealityDefender SDK", func() {
 			})
 
 			var err error
-			client, err = realitydefender.New(realitydefender.Config{
+			client, err = realitydefender2.New(realitydefender2.Config{
 				APIKey:  "test-api-key",
 				BaseURL: server.URL,
 			})
@@ -278,7 +277,7 @@ var _ = Describe("RealityDefender SDK", func() {
 			}))
 
 			var err error
-			client, err = realitydefender.New(realitydefender.Config{
+			client, err = realitydefender2.New(realitydefender2.Config{
 				APIKey:  "test-api-key",
 				BaseURL: "http://not-used-in-this-test",
 			})
@@ -298,7 +297,7 @@ var _ = Describe("RealityDefender SDK", func() {
 
 			// Create a new upload options and try to uploadToSignedURL (via the Upload method)
 			// This will fail because the server is closed
-			_, err = client.Upload(ctx, realitydefender.UploadOptions{
+			_, err = client.Upload(ctx, realitydefender2.UploadOptions{
 				FilePath: filePath,
 			})
 
@@ -310,7 +309,7 @@ var _ = Describe("RealityDefender SDK", func() {
 	Describe("Error Handling", func() {
 		BeforeEach(func() {
 			var err error
-			client, err = realitydefender.New(realitydefender.Config{
+			client, err = realitydefender2.New(realitydefender2.Config{
 				APIKey:  "test-api-key",
 				BaseURL: "http://localhost:1", // Invalid URL that will cause connection errors
 			})
@@ -328,7 +327,7 @@ var _ = Describe("RealityDefender SDK", func() {
 
 		It("handles file validation errors in Upload", func() {
 			ctx := context.Background()
-			result, err := client.Upload(ctx, realitydefender.UploadOptions{
+			result, err := client.Upload(ctx, realitydefender2.UploadOptions{
 				FilePath: "", // Empty path should cause validation error
 			})
 
@@ -397,7 +396,7 @@ var _ = Describe("RealityDefender SDK", func() {
 			})
 
 			var err error
-			client, err = realitydefender.New(realitydefender.Config{
+			client, err = realitydefender2.New(realitydefender2.Config{
 				APIKey:  "test-api-key",
 				BaseURL: server.URL,
 			})
@@ -409,21 +408,21 @@ var _ = Describe("RealityDefender SDK", func() {
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 			defer cancel()
 
-			resultCh := make(chan *realitydefender.DetectionResult, 1)
+			resultCh := make(chan *realitydefender2.DetectionResult, 1)
 
 			client.On("result", func(data interface{}) {
-				result := data.(*realitydefender.DetectionResult)
+				result := data.(*realitydefender2.DetectionResult)
 				resultCh <- result
 			})
 
 			// Set very short polling interval and reasonable timeout
-			err := client.PollForResults(ctx, "test-request-id", &realitydefender.PollOptions{
+			err := client.PollForResults(ctx, "test-request-id", &realitydefender2.PollOptions{
 				PollingInterval: 50,   // 50ms for faster test
 				Timeout:         5000, // 5s timeout should be enough
 			})
 			Expect(err).NotTo(HaveOccurred())
 
-			var result *realitydefender.DetectionResult
+			var result *realitydefender2.DetectionResult
 			select {
 			case result = <-resultCh:
 				// Result received
@@ -441,15 +440,15 @@ var _ = Describe("RealityDefender SDK", func() {
 
 			// Set up result handler
 			var resultReceived bool
-			var resultData *realitydefender.DetectionResult
+			var resultData *realitydefender2.DetectionResult
 
 			client.On("result", func(data interface{}) {
 				resultReceived = true
-				resultData = data.(*realitydefender.DetectionResult)
+				resultData = data.(*realitydefender2.DetectionResult)
 			})
 
 			// Start polling with short interval for test
-			err := client.PollForResults(ctx, "test-request-id", &realitydefender.PollOptions{
+			err := client.PollForResults(ctx, "test-request-id", &realitydefender2.PollOptions{
 				PollingInterval: 100,  // 100ms
 				Timeout:         5000, // 5s
 			})
@@ -479,7 +478,7 @@ var _ = Describe("RealityDefender SDK", func() {
 			})
 
 			var err error
-			client, err = realitydefender.New(realitydefender.Config{
+			client, err = realitydefender2.New(realitydefender2.Config{
 				APIKey:  "test-api-key",
 				BaseURL: server.URL,
 			})
@@ -504,7 +503,7 @@ var _ = Describe("RealityDefender SDK", func() {
 
 	Describe("Event handling", func() {
 		It("registers and triggers event handlers", func() {
-			client, err := realitydefender.New(realitydefender.Config{
+			client, err := realitydefender2.New(realitydefender2.Config{
 				APIKey: "test-api-key",
 			})
 			Expect(err).NotTo(HaveOccurred())
@@ -552,7 +551,7 @@ var _ = Describe("RealityDefender SDK", func() {
 			defer server.Close()
 
 			// Update client to use test server
-			client, err = realitydefender.New(realitydefender.Config{
+			client, err = realitydefender2.New(realitydefender2.Config{
 				APIKey:  "test-api-key",
 				BaseURL: server.URL,
 			})
@@ -569,7 +568,7 @@ var _ = Describe("RealityDefender SDK", func() {
 
 			// Start polling with very short timeout
 			ctx := context.Background()
-			err = client.PollForResults(ctx, "test-request-id", &realitydefender.PollOptions{
+			err = client.PollForResults(ctx, "test-request-id", &realitydefender2.PollOptions{
 				PollingInterval: 10,
 				Timeout:         1000,
 			})
@@ -585,13 +584,13 @@ var _ = Describe("RealityDefender SDK", func() {
 			}
 
 			// Verify the result is a DetectionResult
-			detectionResult, ok := result.(*realitydefender.DetectionResult)
+			detectionResult, ok := result.(*realitydefender2.DetectionResult)
 			Expect(ok).To(BeTrue())
 			Expect(detectionResult.Status).To(Equal("MANIPULATED"))
 		})
 
 		It("handles multiple registered handlers for the same event", func() {
-			client, err := realitydefender.New(realitydefender.Config{
+			client, err := realitydefender2.New(realitydefender2.Config{
 				APIKey: "test-api-key",
 			})
 			Expect(err).NotTo(HaveOccurred())
@@ -635,7 +634,7 @@ var _ = Describe("RealityDefender SDK", func() {
 			defer server.Close()
 
 			// Update client to use test server
-			client, err = realitydefender.New(realitydefender.Config{
+			client, err = realitydefender2.New(realitydefender2.Config{
 				APIKey:  "test-api-key",
 				BaseURL: server.URL,
 			})
@@ -652,7 +651,7 @@ var _ = Describe("RealityDefender SDK", func() {
 
 			// Start polling
 			ctx := context.Background()
-			err = client.PollForResults(ctx, "test-request-id", &realitydefender.PollOptions{
+			err = client.PollForResults(ctx, "test-request-id", &realitydefender2.PollOptions{
 				PollingInterval: 10,
 				Timeout:         1000,
 			})
@@ -731,7 +730,7 @@ var _ = Describe("RealityDefender SDK", func() {
 			}))
 			defer server.Close()
 
-			client, err := realitydefender.New(realitydefender.Config{
+			client, err := realitydefender2.New(realitydefender2.Config{
 				APIKey:  "test-api-key",
 				BaseURL: server.URL,
 			})
@@ -745,7 +744,7 @@ var _ = Describe("RealityDefender SDK", func() {
 
 			// Start polling
 			ctx := context.Background()
-			err = client.PollForResults(ctx, "test-request-id", &realitydefender.PollOptions{
+			err = client.PollForResults(ctx, "test-request-id", &realitydefender2.PollOptions{
 				PollingInterval: 10,
 				Timeout:         1000,
 			})
@@ -764,7 +763,7 @@ var _ = Describe("RealityDefender SDK", func() {
 			}
 
 			// Verify the result
-			detectionResult, ok := result.(*realitydefender.DetectionResult)
+			detectionResult, ok := result.(*realitydefender2.DetectionResult)
 			Expect(ok).To(BeTrue())
 			Expect(detectionResult.Status).To(Equal("MANIPULATED"))
 		})
@@ -792,7 +791,7 @@ var _ = Describe("RealityDefender SDK", func() {
 			}))
 			defer server.Close()
 
-			client, err := realitydefender.New(realitydefender.Config{
+			client, err := realitydefender2.New(realitydefender2.Config{
 				APIKey:  "test-api-key",
 				BaseURL: server.URL,
 			})
@@ -809,7 +808,7 @@ var _ = Describe("RealityDefender SDK", func() {
 			defer cancel()
 
 			// Start polling with very short timeout
-			err = client.PollForResults(ctx, "test-request-id", &realitydefender.PollOptions{
+			err = client.PollForResults(ctx, "test-request-id", &realitydefender2.PollOptions{
 				PollingInterval: 10,
 				Timeout:         50, // Very short timeout to force timeout error
 			})
@@ -842,7 +841,7 @@ var _ = Describe("RealityDefender SDK", func() {
 			}))
 			defer server.Close()
 
-			client, err := realitydefender.New(realitydefender.Config{
+			client, err := realitydefender2.New(realitydefender2.Config{
 				APIKey:  "test-api-key",
 				BaseURL: server.URL,
 			})
@@ -858,7 +857,7 @@ var _ = Describe("RealityDefender SDK", func() {
 			}()
 
 			// Start polling
-			err = client.PollForResults(ctx, "test-request-id", &realitydefender.PollOptions{
+			err = client.PollForResults(ctx, "test-request-id", &realitydefender2.PollOptions{
 				PollingInterval: 10,
 				Timeout:         1000,
 			})
@@ -872,7 +871,7 @@ var _ = Describe("RealityDefender SDK", func() {
 			// This is a stub test as it's difficult to test file uploads without real files
 			// We'd need to create temporary files or mock at a lower level
 			// For now, we're just validating the client parameter validation
-			client, err := realitydefender.New(realitydefender.Config{
+			client, err := realitydefender2.New(realitydefender2.Config{
 				APIKey: "test-api-key",
 			})
 			Expect(err).NotTo(HaveOccurred())

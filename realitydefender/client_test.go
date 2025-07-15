@@ -2,11 +2,11 @@ package realitydefender_test
 
 import (
 	"context"
+	realitydefender2 "github.com/Reality-Defender/realitydefender-sdk-go/realitydefender"
 	"net/http"
 	"net/http/httptest"
 	"time"
 
-	"github.com/Reality-Defender/realitydefender-sdk-go/src/realitydefender"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
@@ -14,7 +14,7 @@ import (
 var _ = Describe("HTTP Client", func() {
 	var (
 		server *httptest.Server
-		client *realitydefender.Client
+		client *realitydefender2.Client
 	)
 
 	AfterEach(func() {
@@ -35,7 +35,7 @@ var _ = Describe("HTTP Client", func() {
 			}))
 
 			var err error
-			client, err = realitydefender.New(realitydefender.Config{
+			client, err = realitydefender2.New(realitydefender2.Config{
 				APIKey:  "test-api-key",
 				BaseURL: server.URL,
 			})
@@ -54,7 +54,7 @@ var _ = Describe("HTTP Client", func() {
 			}))
 
 			var err error
-			client, err = realitydefender.New(realitydefender.Config{
+			client, err = realitydefender2.New(realitydefender2.Config{
 				APIKey:  "invalid-api-key",
 				BaseURL: server.URL,
 			})
@@ -74,7 +74,7 @@ var _ = Describe("HTTP Client", func() {
 			server.Close() // Immediately close to force connection error
 
 			var err error
-			client, err = realitydefender.New(realitydefender.Config{
+			client, err = realitydefender2.New(realitydefender2.Config{
 				APIKey:  "test-api-key",
 				BaseURL: server.URL,
 			})
@@ -94,7 +94,7 @@ var _ = Describe("HTTP Client", func() {
 			}))
 
 			var err error
-			client, err = realitydefender.New(realitydefender.Config{
+			client, err = realitydefender2.New(realitydefender2.Config{
 				APIKey:  "test-api-key",
 				BaseURL: server.URL,
 			})
@@ -105,7 +105,7 @@ var _ = Describe("HTTP Client", func() {
 			defer cancel()
 
 			// Use specific options to limit retries
-			options := &realitydefender.GetResultOptions{
+			options := &realitydefender2.GetResultOptions{
 				MaxAttempts:     1,
 				PollingInterval: 100,
 			}
@@ -123,7 +123,7 @@ var _ = Describe("HTTP Client", func() {
 			}))
 
 			var err error
-			client, err = realitydefender.New(realitydefender.Config{
+			client, err = realitydefender2.New(realitydefender2.Config{
 				APIKey:  "test-api-key",
 				BaseURL: server.URL,
 			})
@@ -149,7 +149,7 @@ var _ = Describe("HTTP Client", func() {
 			}))
 
 			var err error
-			client, err = realitydefender.New(realitydefender.Config{
+			client, err = realitydefender2.New(realitydefender2.Config{
 				APIKey:  "test-api-key",
 				BaseURL: server.URL,
 			})
@@ -157,7 +157,7 @@ var _ = Describe("HTTP Client", func() {
 
 			ctx := context.Background()
 			// We'll test Upload which internally makes a POST request
-			result, err := client.Upload(ctx, realitydefender.UploadOptions{
+			result, err := client.Upload(ctx, realitydefender2.UploadOptions{
 				FilePath: "../../../testdata/non-existent-file.jpg", // Will fail before making the actual request
 			})
 
@@ -174,7 +174,7 @@ var _ = Describe("HTTP Client", func() {
 			}))
 
 			var err error
-			client, err = realitydefender.New(realitydefender.Config{
+			client, err = realitydefender2.New(realitydefender2.Config{
 				APIKey:  "test-api-key",
 				BaseURL: server.URL,
 			})
@@ -197,7 +197,7 @@ var _ = Describe("HTTP Client", func() {
 			}))
 
 			var err error
-			client, err = realitydefender.New(realitydefender.Config{
+			client, err = realitydefender2.New(realitydefender2.Config{
 				APIKey:  "test-api-key",
 				BaseURL: server.URL,
 			})
@@ -211,7 +211,7 @@ var _ = Describe("HTTP Client", func() {
 
 	Describe("Client initialization", func() {
 		It("fails when API key is not provided", func() {
-			client, err := realitydefender.New(realitydefender.Config{
+			client, err := realitydefender2.New(realitydefender2.Config{
 				BaseURL: "https://example.com",
 			})
 
@@ -221,7 +221,7 @@ var _ = Describe("HTTP Client", func() {
 		})
 
 		It("uses default base URL when not provided", func() {
-			client, err := realitydefender.New(realitydefender.Config{
+			client, err := realitydefender2.New(realitydefender2.Config{
 				APIKey: "test-api-key",
 			})
 
