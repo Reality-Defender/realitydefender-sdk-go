@@ -3,7 +3,7 @@ package realitydefender_test
 import (
 	"context"
 	"encoding/json"
-	realitydefender2 "github.com/Reality-Defender/realitydefender-sdk-go/realitydefender"
+	realitydefender "github.com/Reality-Defender/realitydefender-sdk-go/realitydefender"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -16,7 +16,7 @@ import (
 var _ = Describe("Detection Functions", func() {
 	var (
 		server  *httptest.Server
-		client  *realitydefender2.Client
+		client  *realitydefender.Client
 		tempDir string
 	)
 
@@ -66,12 +66,12 @@ var _ = Describe("Detection Functions", func() {
 				]
 			}`
 
-			var mediaResponse realitydefender2.MediaResponse
+			var mediaResponse realitydefender.MediaResponse
 			err := json.Unmarshal([]byte(responseJSON), &mediaResponse)
 			Expect(err).NotTo(HaveOccurred())
 
 			// Format the result
-			result := realitydefender2.FormatResult(&mediaResponse)
+			result := realitydefender.FormatResult(&mediaResponse)
 
 			// Verify the result
 			Expect(result.Status).To(Equal("MANIPULATED"))
@@ -121,12 +121,12 @@ var _ = Describe("Detection Functions", func() {
 				]
 			}`
 
-			var mediaResponse realitydefender2.MediaResponse
+			var mediaResponse realitydefender.MediaResponse
 			err := json.Unmarshal([]byte(responseJSON), &mediaResponse)
 			Expect(err).NotTo(HaveOccurred())
 
 			// Format the result
-			result := realitydefender2.FormatResult(&mediaResponse)
+			result := realitydefender.FormatResult(&mediaResponse)
 
 			// Verify the result
 			Expect(result.Status).To(Equal("AUTHENTIC"))
@@ -176,12 +176,12 @@ var _ = Describe("Detection Functions", func() {
 				]
 			}`
 
-			var mediaResponse realitydefender2.MediaResponse
+			var mediaResponse realitydefender.MediaResponse
 			err := json.Unmarshal([]byte(responseJSON), &mediaResponse)
 			Expect(err).NotTo(HaveOccurred())
 
 			// Format the result
-			result := realitydefender2.FormatResult(&mediaResponse)
+			result := realitydefender.FormatResult(&mediaResponse)
 
 			// Verify the result
 			Expect(result.Status).To(Equal("ANALYZING"))
@@ -218,12 +218,12 @@ var _ = Describe("Detection Functions", func() {
 				"models": []
 			}`
 
-			var mediaResponse realitydefender2.MediaResponse
+			var mediaResponse realitydefender.MediaResponse
 			err := json.Unmarshal([]byte(responseJSON), &mediaResponse)
 			Expect(err).NotTo(HaveOccurred())
 
 			// Format the result
-			result := realitydefender2.FormatResult(&mediaResponse)
+			result := realitydefender.FormatResult(&mediaResponse)
 
 			// Verify the result
 			Expect(result.Status).To(Equal("ERROR"))
@@ -272,7 +272,7 @@ var _ = Describe("Detection Functions", func() {
 			}))
 
 			var err error
-			client, err = realitydefender2.New(realitydefender2.Config{
+			client, err = realitydefender.New(realitydefender.Config{
 				APIKey:  "test-api-key",
 				BaseURL: server.URL,
 			})
@@ -283,7 +283,7 @@ var _ = Describe("Detection Functions", func() {
 			defer cancel()
 
 			// Set short polling interval to speed up test
-			options := &realitydefender2.GetResultOptions{
+			options := &realitydefender.GetResultOptions{
 				MaxAttempts:     5,
 				PollingInterval: 50, // 50ms between attempts
 			}

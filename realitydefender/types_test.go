@@ -2,8 +2,7 @@ package realitydefender_test
 
 import (
 	"encoding/json"
-	realitydefender2 "github.com/Reality-Defender/realitydefender-sdk-go/realitydefender"
-
+	"github.com/Reality-Defender/realitydefender-sdk-go/realitydefender"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
@@ -11,9 +10,9 @@ import (
 var _ = Describe("Types and Structures", func() {
 	Describe("SDKError", func() {
 		It("formats error messages correctly", func() {
-			err := &realitydefender2.SDKError{
+			err := &realitydefender.SDKError{
 				Message: "Test error message",
-				Code:    realitydefender2.ErrorCodeInvalidFile,
+				Code:    realitydefender.ErrorCodeInvalidFile,
 			}
 
 			errString := err.Error()
@@ -31,10 +30,10 @@ var _ = Describe("Types and Structures", func() {
 			modelScore2 := 0.01
 
 			// Create a test result
-			original := &realitydefender2.DetectionResult{
+			original := &realitydefender.DetectionResult{
 				Status: "MANIPULATED",
 				Score:  &score,
-				Models: []realitydefender2.ModelResult{
+				Models: []realitydefender.ModelResult{
 					{
 						Name:   "model1",
 						Status: "MANIPULATED",
@@ -53,7 +52,7 @@ var _ = Describe("Types and Structures", func() {
 			Expect(err).NotTo(HaveOccurred())
 
 			// Deserialize back
-			var result realitydefender2.DetectionResult
+			var result realitydefender.DetectionResult
 			err = json.Unmarshal(jsonData, &result)
 			Expect(err).NotTo(HaveOccurred())
 
@@ -73,10 +72,10 @@ var _ = Describe("Types and Structures", func() {
 
 		It("handles null scores correctly", func() {
 			// Create a result with nil score
-			original := &realitydefender2.DetectionResult{
+			original := &realitydefender.DetectionResult{
 				Status: "ANALYZING",
 				Score:  nil,
-				Models: []realitydefender2.ModelResult{
+				Models: []realitydefender.ModelResult{
 					{
 						Name:   "model1",
 						Status: "ANALYZING",
@@ -90,7 +89,7 @@ var _ = Describe("Types and Structures", func() {
 			Expect(err).NotTo(HaveOccurred())
 
 			// Deserialize back
-			var result realitydefender2.DetectionResult
+			var result realitydefender.DetectionResult
 			err = json.Unmarshal(jsonData, &result)
 			Expect(err).NotTo(HaveOccurred())
 
@@ -107,21 +106,21 @@ var _ = Describe("Types and Structures", func() {
 	Describe("Config", func() {
 		It("validates configuration settings", func() {
 			// Valid config
-			validConfig := realitydefender2.Config{
+			validConfig := realitydefender.Config{
 				APIKey:  "test-api-key",
 				BaseURL: "https://custom.api.example.com",
 			}
 
-			client, err := realitydefender2.New(validConfig)
+			client, err := realitydefender.New(validConfig)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(client).NotTo(BeNil())
 
 			// Missing API key
-			invalidConfig := realitydefender2.Config{
+			invalidConfig := realitydefender.Config{
 				BaseURL: "https://custom.api.example.com",
 			}
 
-			client, err = realitydefender2.New(invalidConfig)
+			client, err = realitydefender.New(invalidConfig)
 			Expect(err).To(HaveOccurred())
 			Expect(err.Error()).To(ContainSubstring("API key is required"))
 			Expect(client).To(BeNil())
