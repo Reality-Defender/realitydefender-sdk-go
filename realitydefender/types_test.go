@@ -2,8 +2,7 @@ package realitydefender_test
 
 import (
 	"encoding/json"
-
-	"github.com/Reality-Defender/realitydefender-sdk-go/src/realitydefender"
+	"github.com/Reality-Defender/realitydefender-sdk-go/realitydefender"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )

@@ -2,6 +2,7 @@ package realitydefender_test
 
 import (
 	"context"
+	realitydefender "github.com/Reality-Defender/realitydefender-sdk-go/realitydefender"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -11,8 +12,6 @@ import (
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-
-	"github.com/Reality-Defender/realitydefender-sdk-go/src/realitydefender"
 )
 
 var _ = Describe("RealityDefender SDK", func() {

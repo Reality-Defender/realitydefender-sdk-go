@@ -27,7 +27,7 @@ jobs:
 
       - name: Get tag version
         run: |
-          echo "SDK_VERSION=$(git describe --tags --abbrev=0 | cut -c2-)" >> $GITHUB_ENV
+          echo "SDK_VERSION=$(git describe --tags --abbrev=0 | cut -c1-)" >> $GITHUB_ENV
 
       - name: Install SSH key
         if: ${{ inputs.is-release == true }}

@@ -3,12 +3,12 @@ package realitydefender_test
 import (
 	"context"
 	"encoding/json"
+	realitydefender "github.com/Reality-Defender/realitydefender-sdk-go/realitydefender"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"time"
 
-	"github.com/Reality-Defender/realitydefender-sdk-go/src/realitydefender"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
