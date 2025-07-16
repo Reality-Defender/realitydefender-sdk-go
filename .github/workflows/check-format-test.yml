@@ -52,7 +52,7 @@ jobs:
         uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.codecov-token }}
-          files: ./coverage/src_realitydefender_coverprofile.out
+          files: ./coverage/realitydefender_coverprofile.out
           flags: go
           name: go-sdk-codecov
           fail_ci_if_error: ${{ inputs.is-release }}
