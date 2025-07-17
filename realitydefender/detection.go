@@ -52,6 +52,7 @@ type MediaResponse struct {
 	} `json:"models"`
 }
 
+// AllMediaResponse represents a paginated response containing a list of media and related metadata.
 type AllMediaResponse struct {
 	TotalItems            int             `json:"totalItems"`
 	TotalPages            int             `json:"totalPages"`
