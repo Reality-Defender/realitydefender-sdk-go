@@ -57,4 +57,7 @@ run-events:
     cd examples/events && go run main.go
 
 run-channels:
-    cd examples/channels && go run main.go 
+    cd examples/channels && go run main.go
+
+run-results:
+    cd examples/results && go run main.go

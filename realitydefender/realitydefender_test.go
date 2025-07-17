@@ -192,6 +192,385 @@ var _ = Describe("RealityDefender SDK", func() {
 		})
 	})
 
+	Describe("GetResults", func() {
+		var (
+			mockServer *httptest.Server
+			client     *realitydefender.Client
+		)
+
+		BeforeEach(func() {
+			mockServer = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				w.Header().Set("Content-Type", "application/json")
+
+				// Parse query parameters to determine response
+				pageNumber := r.URL.Query().Get("page")
+				size := r.URL.Query().Get("size")
+				name := r.URL.Query().Get("name")
+
+				// Mock different responses based on parameters
+				if pageNumber == "999" {
+					// Empty results for high page numbers
+					w.WriteHeader(http.StatusOK)
+					w.Write([]byte(`{
+						"totalItems": 0,
+						"currentPageItemsCount": 0,
+						"totalPages": 0,
+						"currentPage": 999,
+						"mediaList": []
+					}`))
+					return
+				}
+
+				if name == "error-test" {
+					// Simulate server error
+					w.WriteHeader(http.StatusInternalServerError)
+					w.Write([]byte(`{"error": "Internal server error"}`))
+					return
+				}
+
+				// Default success response
+				w.WriteHeader(http.StatusOK)
+				response := `{
+					"totalItems": 150,
+					"currentPageItemsCount": 2,
+					"totalPages": 15,
+					"currentPage": 1,
+					"mediaList": [
+						{
+							"resultsSummary": {
+								"status": "FAKE",
+								"metadata": {
+									"finalScore": 0.95
+								}
+							},
+							"models": [
+								{
+									"name": "model1",
+									"status": "FAKE",
+									"finalScore": 0.99
+								}
+							]
+						},
+						{
+							"resultsSummary": {
+								"status": "AUTHENTIC",
+								"metadata": {
+									"finalScore": 0.95
+								}
+							},
+							"models": [
+								{
+									"name": "model2",
+									"status": "AUTHENTIC",
+									"finalScore": 0.01
+								}
+							]
+						}
+					]
+				}`
+
+				// Modify response based on size parameter
+				if size == "1" {
+					response = `{
+						"totalItems": 150,
+						"currentPageItemsCount": 1,
+						"totalPages": 150,
+						"currentPage": 1,
+						"mediaList": [
+							{
+								"resultsSummary": {
+									"status": "AUTHENTIC",
+									"metadata": {
+										"finalScore": 0.95
+									}
+								},
+								"models": [
+									{
+										"name": "model1",
+										"status": "ARTIFICIAL",
+										"finalScore": 0.99
+									}
+								]
+							}
+						]
+					}`
+				}
+
+				w.Write([]byte(response))
+			}))
+
+			config := realitydefender.Config{
+				APIKey:  "test-api-key",
+				BaseURL: mockServer.URL,
+			}
+
+			var err error
+			client, err = realitydefender.New(config)
+			Expect(err).NotTo(HaveOccurred())
+		})
+
+		AfterEach(func() {
+			mockServer.Close()
+		})
+
+		Context("with default parameters", func() {
+			It("should return results when all parameters are nil", func() {
+				ctx := context.Background()
+
+				result, err := client.GetResults(ctx, nil, nil, nil, nil, nil, nil)
+
+				Expect(err).NotTo(HaveOccurred())
+				Expect(result).NotTo(BeNil())
+				Expect(result.TotalItems).To(Equal(150))
+				Expect(result.CurrentPageItemsCount).To(Equal(2))
+				Expect(result.TotalPages).To(Equal(15))
+				Expect(result.CurrentPage).To(Equal(1))
+				Expect(result.Items).To(HaveLen(2))
+			})
+
+			It("should handle nil pageNumber parameter", func() {
+				ctx := context.Background()
+				size := 10
+
+				result, err := client.GetResults(ctx, nil, &size, nil, nil, nil, nil)
+
+				Expect(err).NotTo(HaveOccurred())
+				Expect(result).NotTo(BeNil())
+				Expect(result.Items).To(HaveLen(2))
+			})
+
+			It("should handle nil size parameter", func() {
+				ctx := context.Background()
+				pageNumber := 1
+
+				result, err := client.GetResults(ctx, &pageNumber, nil, nil, nil, nil, nil)
+
+				Expect(err).NotTo(HaveOccurred())
+				Expect(result).NotTo(BeNil())
+				Expect(result.Items).To(HaveLen(2))
+			})
+		})
+
+		Context("with specific parameters", func() {
+			It("should use provided pageNumber", func() {
+				ctx := context.Background()
+				pageNumber := 2
+
+				result, err := client.GetResults(ctx, &pageNumber, nil, nil, nil, nil, nil)
+
+				Expect(err).NotTo(HaveOccurred())
+				Expect(result).NotTo(BeNil())
+			})
+
+			It("should use provided size", func() {
+				ctx := context.Background()
+				size := 1
+
+				result, err := client.GetResults(ctx, nil, &size, nil, nil, nil, nil)
+
+				Expect(err).NotTo(HaveOccurred())
+				Expect(result).NotTo(BeNil())
+				Expect(result.CurrentPageItemsCount).To(Equal(1))
+				Expect(result.Items).To(HaveLen(1))
+			})
+
+			It("should use provided name filter", func() {
+				ctx := context.Background()
+				name := "test-detection"
+
+				result, err := client.GetResults(ctx, nil, nil, &name, nil, nil, nil)
+
+				Expect(err).NotTo(HaveOccurred())
+				Expect(result).NotTo(BeNil())
+			})
+
+			It("should use provided date range", func() {
+				ctx := context.Background()
+				startDate := time.Now().AddDate(0, 0, -7)
+				endDate := time.Now()
+
+				result, err := client.GetResults(ctx, nil, nil, nil, &startDate, &endDate, nil)
+
+				Expect(err).NotTo(HaveOccurred())
+				Expect(result).NotTo(BeNil())
+			})
+
+			It("should handle all parameters together", func() {
+				ctx := context.Background()
+				pageNumber := 1
+				size := 20
+				name := "combined-test"
+				startDate := time.Now().AddDate(0, 0, -7)
+				endDate := time.Now()
+
+				result, err := client.GetResults(ctx, &pageNumber, &size, &name, &startDate, &endDate, nil)
+
+				Expect(err).NotTo(HaveOccurred())
+				Expect(result).NotTo(BeNil())
+				Expect(result.Items).To(HaveLen(2))
+			})
+		})
+
+		Context("with edge cases", func() {
+			It("should handle zero pageNumber", func() {
+				ctx := context.Background()
+				pageNumber := 0
+
+				result, err := client.GetResults(ctx, &pageNumber, nil, nil, nil, nil, nil)
+
+				Expect(err).NotTo(HaveOccurred())
+				Expect(result).NotTo(BeNil())
+			})
+
+			It("should handle large pageNumber", func() {
+				ctx := context.Background()
+				pageNumber := 999
+
+				result, err := client.GetResults(ctx, &pageNumber, nil, nil, nil, nil, nil)
+
+				Expect(err).NotTo(HaveOccurred())
+				Expect(result).NotTo(BeNil())
+				Expect(result.TotalItems).To(Equal(150))
+				Expect(result.Items).To(HaveLen(2))
+			})
+
+			It("should handle zero size", func() {
+				ctx := context.Background()
+				size := 0
+
+				result, err := client.GetResults(ctx, nil, &size, nil, nil, nil, nil)
+
+				Expect(err).NotTo(HaveOccurred())
+				Expect(result).NotTo(BeNil())
+			})
+
+			It("should handle empty name string", func() {
+				ctx := context.Background()
+				name := ""
+
+				result, err := client.GetResults(ctx, nil, nil, &name, nil, nil, nil)
+
+				Expect(err).NotTo(HaveOccurred())
+				Expect(result).NotTo(BeNil())
+			})
+
+			It("should handle future date range", func() {
+				ctx := context.Background()
+				startDate := time.Now().AddDate(0, 0, 1)
+				endDate := time.Now().AddDate(0, 0, 2)
+
+				result, err := client.GetResults(ctx, nil, nil, nil, &startDate, &endDate, nil)
+
+				Expect(err).NotTo(HaveOccurred())
+				Expect(result).NotTo(BeNil())
+			})
+
+			It("should handle inverted date range", func() {
+				ctx := context.Background()
+				startDate := time.Now()
+				endDate := time.Now().AddDate(0, 0, -1)
+
+				result, err := client.GetResults(ctx, nil, nil, nil, &startDate, &endDate, nil)
+
+				Expect(err).NotTo(HaveOccurred())
+				Expect(result).NotTo(BeNil())
+			})
+		})
+
+		Context("with context handling", func() {
+			It("should handle context cancellation", func() {
+				ctx, cancel := context.WithCancel(context.Background())
+				cancel()
+
+				result, err := client.GetResults(ctx, nil, nil, nil, nil, nil, nil)
+
+				Expect(err).To(HaveOccurred())
+				Expect(result).To(BeNil())
+			})
+
+			It("should handle context timeout", func() {
+				ctx, cancel := context.WithTimeout(context.Background(), 1*time.Nanosecond)
+				defer cancel()
+
+				time.Sleep(2 * time.Nanosecond)
+
+				result, err := client.GetResults(ctx, nil, nil, nil, nil, nil, nil)
+
+				Expect(err).To(HaveOccurred())
+				Expect(result).To(BeNil())
+			})
+		})
+
+		Context("with error scenarios", func() {
+			It("should handle server errors", func() {
+				ctx := context.Background()
+				name := "error-test"
+
+				result, err := client.GetResults(ctx, nil, nil, &name, nil, nil, nil)
+
+				Expect(err).To(HaveOccurred())
+				Expect(result).To(BeNil())
+			})
+
+			It("should handle network errors", func() {
+				// Stop the mock server to simulate network error
+				mockServer.Close()
+
+				ctx := context.Background()
+				result, err := client.GetResults(ctx, nil, nil, nil, nil, nil, nil)
+
+				Expect(err).To(HaveOccurred())
+				Expect(result).To(BeNil())
+			})
+		})
+
+		Context("with result validation", func() {
+			It("should properly parse DetectionResult items", func() {
+				ctx := context.Background()
+
+				result, err := client.GetResults(ctx, nil, nil, nil, nil, nil, nil)
+
+				Expect(err).NotTo(HaveOccurred())
+				Expect(result).NotTo(BeNil())
+				Expect(result.Items).To(HaveLen(2))
+
+				// Verify first item
+				firstItem := result.Items[0]
+				Expect(firstItem.Status).To(Equal("MANIPULATED"))
+				Expect(firstItem.Score).NotTo(BeNil())
+				Expect(*firstItem.Score).To(Equal(0.95))
+				Expect(firstItem.Models).To(HaveLen(1))
+				Expect(firstItem.Models[0].Name).To(Equal("model1"))
+				Expect(firstItem.Models[0].Status).To(Equal("MANIPULATED"))
+				Expect(*firstItem.Models[0].Score).To(Equal(0.99))
+
+				// Verify second item
+				secondItem := result.Items[1]
+				Expect(secondItem.Status).To(Equal("AUTHENTIC"))
+				Expect(secondItem.Score).NotTo(BeNil())
+				Expect(*secondItem.Score).To(Equal(0.95))
+				Expect(secondItem.Models).To(HaveLen(1))
+				Expect(secondItem.Models[0].Name).To(Equal("model2"))
+				Expect(secondItem.Models[0].Status).To(Equal("AUTHENTIC"))
+				Expect(*secondItem.Models[0].Score).To(Equal(0.01))
+			})
+
+			It("should handle pagination metadata correctly", func() {
+				ctx := context.Background()
+
+				result, err := client.GetResults(ctx, nil, nil, nil, nil, nil, nil)
+
+				Expect(err).NotTo(HaveOccurred())
+				Expect(result).NotTo(BeNil())
+				Expect(result.TotalItems).To(BeNumerically(">", 0))
+				Expect(result.CurrentPageItemsCount).To(BeNumerically(">=", 0))
+				Expect(result.TotalPages).To(BeNumerically(">", 0))
+				Expect(result.CurrentPage).To(BeNumerically(">=", 1))
+				Expect(result.CurrentPageItemsCount).To(Equal(len(result.Items)))
+			})
+		})
+	})
+
 	Describe("DetectFile", func() {
 		BeforeEach(func() {
 			mux := http.NewServeMux()

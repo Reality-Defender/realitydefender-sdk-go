@@ -134,6 +134,15 @@ func (c *Client) GetResult(ctx context.Context, requestID string, options *GetRe
 	return getDetectionResult(ctx, c.httpClient, requestID, *options)
 }
 
+// GetResults queries the detection results stored in the platform
+func (c *Client) GetResults(ctx context.Context, pageNumber *int, size *int, name *string, startDate *time.Time, endDate *time.Time, options *GetResultOptions) (*DetectionResultList, error) {
+	if options == nil {
+		options = &GetResultOptions{}
+	}
+
+	return getDetectionResults(ctx, c.httpClient, pageNumber, size, name, startDate, endDate, *options)
+}
+
 // PollForResults starts polling for results with event-based callback
 func (c *Client) PollForResults(ctx context.Context, requestID string, options *PollOptions) error {
 	pollingInterval := DefaultPollingInterval

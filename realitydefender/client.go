@@ -8,6 +8,7 @@ import (
 	"io"
 	"mime/multipart"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"time"
@@ -36,10 +37,20 @@ func newHTTPClient(config *httpClientConfig) *httpClient {
 }
 
 // get performs a GET request to the specified endpoint
-func (c *httpClient) get(ctx context.Context, endpoint string) ([]byte, error) {
-	url := c.config.baseURL + endpoint
+func (c *httpClient) get(ctx context.Context, endpoint string, parameters map[string]string) ([]byte, error) {
+	var queryString = ""
+	if parameters != nil {
+		queryValues := url.Values{}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+		for key, value := range parameters {
+			queryValues.Add(key, value)
+		}
+		queryString += "?" + queryValues.Encode()
+	}
+
+	getUrl := fmt.Sprintf("%s%s%s", c.config.baseURL, endpoint, queryString)
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, getUrl, nil)
 	if err != nil {
 		return nil, &SDKError{
 			Message: fmt.Sprintf("failed to create request: %v", err),
