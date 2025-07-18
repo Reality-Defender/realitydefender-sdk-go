@@ -15,7 +15,7 @@ install-deps:
 lint:
     golint -set_exit_status ./realitydefender/...
 
-# Check code formatting with gofmt
+# Check code formatting with gofmtju
 fmt-check:
     gofmt -l -d $(find ./realitydefender -type f -name '*.go')
     test -z "$(gofmt -l $(find ./realitydefender -type f -name '*.go'))"
@@ -57,4 +57,7 @@ run-events:
     cd examples/events && go run main.go
 
 run-channels:
-    cd examples/channels && go run main.go 
+    cd examples/channels && go run main.go
+
+run-results:
+    cd examples/results && go run main.go

@@ -8,6 +8,7 @@ import (
 	"io"
 	"mime/multipart"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"time"
@@ -36,10 +37,20 @@ func newHTTPClient(config *httpClientConfig) *httpClient {
 }
 
 // get performs a GET request to the specified endpoint
-func (c *httpClient) get(ctx context.Context, endpoint string) ([]byte, error) {
-	url := c.config.baseURL + endpoint
+func (c *httpClient) get(ctx context.Context, endpoint string, parameters map[string]string) ([]byte, error) {
+	var queryString = ""
+	if parameters != nil {
+		queryValues := url.Values{}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+		for key, value := range parameters {
+			queryValues.Add(key, value)
+		}
+		queryString += "?" + queryValues.Encode()
+	}
+
+	getURL := fmt.Sprintf("%s%s%s", c.config.baseURL, endpoint, queryString)
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, getURL, nil)
 	if err != nil {
 		return nil, &SDKError{
 			Message: fmt.Sprintf("failed to create request: %v", err),
@@ -64,7 +75,7 @@ func (c *httpClient) get(ctx context.Context, endpoint string) ([]byte, error) {
 
 // post performs a POST request to the specified endpoint with JSON data
 func (c *httpClient) post(ctx context.Context, endpoint string, data interface{}) ([]byte, error) {
-	url := c.config.baseURL + endpoint
+	postURL := c.config.baseURL + endpoint
 
 	jsonData, err := json.Marshal(data)
 	if err != nil {
@@ -74,7 +85,7 @@ func (c *httpClient) post(ctx context.Context, endpoint string, data interface{}
 		}
 	}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewBuffer(jsonData))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, postURL, bytes.NewBuffer(jsonData))
 	if err != nil {
 		return nil, &SDKError{
 			Message: fmt.Sprintf("failed to create request: %v", err),
@@ -100,7 +111,7 @@ func (c *httpClient) post(ctx context.Context, endpoint string, data interface{}
 
 // uploadFile performs a multipart/form-data POST request to upload a file
 func (c *httpClient) uploadFile(ctx context.Context, endpoint, filePath string) ([]byte, error) {
-	url := c.config.baseURL + endpoint
+	uploadURL := c.config.baseURL + endpoint
 
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -143,7 +154,7 @@ func (c *httpClient) uploadFile(ctx context.Context, endpoint, filePath string) 
 	}
 
 	// Create the request
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, &buf)
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, uploadURL, &buf)
 	if err != nil {
 		return nil, &SDKError{
 			Message: fmt.Sprintf("failed to create request: %v", err),

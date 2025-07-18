@@ -49,3 +49,17 @@ type DetectionResult struct {
 	// Models contains results from individual detection models
 	Models []ModelResult `json:"models"`
 }
+
+// DetectionResultList represents a paginated list of detection results.
+type DetectionResultList struct {
+	// TotalItems is the total number of items available.
+	TotalItems int `json:"total_items"`
+	// CurrentPageItemsCount is the number of items on the current page.
+	CurrentPageItemsCount int `json:"current_page_items_count"`
+	// TotalPages is the total number of pages available.
+	TotalPages int `json:"total_pages"`
+	// CurrentPage is the current page number in the result set.
+	CurrentPage int `json:"current_page"`
+	// Items is a slice containing the detection results for the current page.
+	Items []DetectionResult `json:"items"`
+}

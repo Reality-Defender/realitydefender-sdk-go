@@ -48,3 +48,9 @@ Shows Go-idiomatic concurrent programming using:
 - Channels for result communication
 - Context cancellation support
 - Exponential backoff for polling
+
+### Retrieve results Example
+**Command:** `just run-results`
+**File:** `results/main.go`
+
+Shows how previous results can be retrieved with pagination.

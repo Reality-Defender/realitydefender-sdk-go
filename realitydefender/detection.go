@@ -11,9 +11,10 @@ import (
 )
 
 const (
-	signedURLEndpoint   = "/api/files/aws-presigned"
-	mediaResultEndpoint = "/api/media/users"
-	defaultMaxAttempts  = 30
+	signedURLEndpoint       = "/api/files/aws-presigned"
+	mediaResultEndpoint     = "/api/media/users"
+	allMediaResultsEndpoint = "/api/v2/media/users/pages"
+	defaultMaxAttempts      = 30
 )
 
 // SignedURLResponse represents the response from the signed URL request
@@ -49,6 +50,15 @@ type MediaResponse struct {
 		Data       interface{} `json:"data"`
 		Code       string      `json:"code,omitempty"`
 	} `json:"models"`
+}
+
+// AllMediaResponse represents a paginated response containing a list of media and related metadata.
+type AllMediaResponse struct {
+	TotalItems            int             `json:"totalItems"`
+	TotalPages            int             `json:"totalPages"`
+	CurrentPage           int             `json:"currentPage"`
+	CurrentPageItemsCount int             `json:"currentPageItemsCount"`
+	MediaList             []MediaResponse `json:"mediaList"`
 }
 
 // getSignedURL gets a signed URL for uploading a file
@@ -194,6 +204,22 @@ func FormatResult(response *MediaResponse) *DetectionResult {
 	}
 }
 
+// formatResults converts an API response into a paginated list of formatted detection results.
+func formatResults(response *AllMediaResponse) *DetectionResultList {
+	var detectionResults []DetectionResult
+	for _, media := range response.MediaList {
+		detectionResults = append(detectionResults, *FormatResult(&media))
+	}
+
+	return &DetectionResultList{
+		TotalItems:            response.TotalItems,
+		TotalPages:            response.TotalPages,
+		CurrentPage:           response.CurrentPage,
+		CurrentPageItemsCount: response.CurrentPageItemsCount,
+		Items:                 detectionResults,
+	}
+}
+
 // getDetectionResult gets the detection result for a specific request ID
 func getDetectionResult(ctx context.Context, client *httpClient, requestID string, options GetResultOptions) (*DetectionResult, error) {
 	// Set default values if not provided
@@ -213,7 +239,7 @@ func getDetectionResult(ctx context.Context, client *httpClient, requestID strin
 	// Loop until we get a result or reach max attempts
 	for attempt < maxAttempts {
 		// Get the result
-		responseData, err := client.get(ctx, fmt.Sprintf("%s/%s", mediaResultEndpoint, requestID))
+		responseData, err := client.get(ctx, fmt.Sprintf("%s/%s", mediaResultEndpoint, requestID), nil)
 
 		// Handle specific error types
 		if err != nil {
@@ -289,6 +315,99 @@ func getDetectionResult(ctx context.Context, client *httpClient, requestID strin
 		}
 
 		// We have a final result
+		return result, nil
+	}
+
+	// If we've reached this point, we've exceeded the maximum number of attempts
+	return nil, &SDKError{
+		Message: "exceeded maximum number of polling attempts",
+		Code:    ErrorCodeTimeout,
+	}
+}
+
+// getDetectionResults gets the detection result stored in the platform
+func getDetectionResults(ctx context.Context, client *httpClient, pageNumber *int, size *int, name *string, startDate *time.Time, endDate *time.Time, options GetResultOptions) (*DetectionResultList, error) {
+	// Set default values if not provided
+	if pageNumber == nil {
+		defaultPageNumber := 0
+		pageNumber = &defaultPageNumber
+	}
+
+	var parameters = make(map[string]string)
+
+	if size == nil {
+		defaultSize := 10
+		size = &defaultSize
+	}
+	parameters["size"] = fmt.Sprintf("%d", *size)
+
+	if name != nil {
+		parameters["name"] = *name
+	}
+
+	if startDate != nil {
+		parameters["startDate"] = startDate.Format("2006-01-02")
+	}
+
+	if endDate != nil {
+		parameters["endDate"] = endDate.Format("2006-01-02")
+	}
+
+	maxAttempts := options.MaxAttempts
+	if maxAttempts <= 0 {
+		maxAttempts = defaultMaxAttempts
+	}
+
+	pollingInterval := options.PollingInterval
+	if pollingInterval <= 0 {
+		pollingInterval = DefaultPollingInterval
+	}
+
+	// Keep track of attempts
+	attempt := 0
+
+	// Loop until we get a result or reach max attempts
+	for attempt < maxAttempts {
+		// Get the result
+		responseData, err := client.get(ctx, fmt.Sprintf("%s/%d", allMediaResultsEndpoint, *pageNumber), parameters)
+
+		// Handle specific error types
+		if err != nil {
+			var sdkErr *SDKError
+			if errors.As(err, &sdkErr) && sdkErr.Code == ErrorCodeNotFound {
+				// If resource not found, wait and try again
+				attempt++
+
+				// Check if we've reached max attempts
+				if attempt >= maxAttempts {
+					return nil, err
+				}
+
+				// Wait for the polling interval before trying again
+				select {
+				case <-ctx.Done():
+					return nil, ctx.Err()
+				case <-time.After(time.Duration(pollingInterval) * time.Millisecond):
+					continue
+				}
+			}
+
+			// Any other error, return immediately
+			return nil, err
+		}
+
+		// Parse the response
+		var allMediaResponse AllMediaResponse
+		if err := json.Unmarshal(responseData, &allMediaResponse); err != nil {
+			return nil, &SDKError{
+				Message: fmt.Sprintf("failed to parse result response: %v", err),
+				Code:    ErrorCodeUnknownError,
+			}
+		}
+
+		// Format the response into a DetectionResult
+		result := formatResults(&allMediaResponse)
+
 		return result, nil
 	}
 
