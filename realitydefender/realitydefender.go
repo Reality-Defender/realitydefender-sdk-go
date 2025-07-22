@@ -14,13 +14,14 @@ type ErrorCode string
 
 // Error codes returned by the SDK
 const (
-	ErrorCodeUnauthorized ErrorCode = "unauthorized"  // Invalid or missing API key
-	ErrorCodeServerError  ErrorCode = "server_error"  // Server-side error occurred
-	ErrorCodeTimeout      ErrorCode = "timeout"       // Operation timed out
-	ErrorCodeInvalidFile  ErrorCode = "invalid_file"  // File not found or invalid format
-	ErrorCodeUploadFailed ErrorCode = "upload_failed" // Failed to upload the file
-	ErrorCodeNotFound     ErrorCode = "not_found"     // Requested resource not found
-	ErrorCodeUnknownError ErrorCode = "unknown_error" // Unexpected error
+	ErrorCodeUnauthorized ErrorCode = "unauthorized"   // Invalid or missing API key
+	ErrorCodeServerError  ErrorCode = "server_error"   // Server-side error occurred
+	ErrorCodeTimeout      ErrorCode = "timeout"        // Operation timed out
+	ErrorCodeInvalidFile  ErrorCode = "invalid_file"   // File not found or invalid format
+	ErrorCodeFileTooLarge ErrorCode = "file_too_large" // File is too large
+	ErrorCodeUploadFailed ErrorCode = "upload_failed"  // Failed to upload the file
+	ErrorCodeNotFound     ErrorCode = "not_found"      // Requested resource not found
+	ErrorCodeUnknownError ErrorCode = "unknown_error"  // Unexpected error
 )
 
 // Default configuration values

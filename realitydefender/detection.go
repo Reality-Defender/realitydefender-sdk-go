@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 )
 
@@ -16,6 +17,34 @@ const (
 	allMediaResultsEndpoint = "/api/v2/media/users/pages"
 	defaultMaxAttempts      = 30
 )
+
+// FileTypeConfig represents configuration for a supported file type
+type FileTypeConfig struct {
+	// Extensions is the list of supported file extensions
+	Extensions []string `json:"extensions"`
+	// SizeLimit is the maximum file size in bytes
+	SizeLimit int64 `json:"size_limit"`
+}
+
+// SupportedFileTypes defines the supported file types and their size limits
+var SupportedFileTypes = []FileTypeConfig{
+	{
+		Extensions: []string{".mp4", ".mov"},
+		SizeLimit:  262144000, // ~250 MB
+	},
+	{
+		Extensions: []string{".jpg", ".png", ".jpeg", ".gif", ".webp"},
+		SizeLimit:  52428800, // ~50 MB
+	},
+	{
+		Extensions: []string{".flac", ".wav", ".mp3", ".m4a", ".aac", ".alac", ".ogg"},
+		SizeLimit:  20971520, // ~20 MB
+	},
+	{
+		Extensions: []string{".txt"},
+		SizeLimit:  5242880, // ~5 MB
+	},
+}
 
 // SignedURLResponse represents the response from the signed URL request
 type SignedURLResponse struct {
@@ -124,6 +153,43 @@ func uploadFile(ctx context.Context, client *httpClient, options UploadOptions) 
 		return nil, &SDKError{
 			Message: fmt.Sprintf("file not found: %s", options.FilePath),
 			Code:    ErrorCodeInvalidFile,
+		}
+	}
+
+	// Get file size
+	fileInfo, _ := os.Stat(options.FilePath)
+	fileSize := fileInfo.Size()
+
+	// Get file extension
+	fileExtension := strings.ToLower(filepath.Ext(options.FilePath))
+
+	// Find size limit for the file extension
+	var fileSizeLimit int64 = 0
+	for _, fileType := range SupportedFileTypes {
+		for _, ext := range fileType.Extensions {
+			if ext == fileExtension {
+				fileSizeLimit = fileType.SizeLimit
+				break
+			}
+		}
+		if fileSizeLimit != 0 {
+			break
+		}
+	}
+
+	// Check if file type is supported
+	if fileSizeLimit == 0 {
+		return nil, &SDKError{
+			Message: fmt.Sprintf("Unsupported file type: %s", fileExtension),
+			Code:    ErrorCodeInvalidFile,
+		}
+	}
+
+	// Check file size
+	if fileSize > fileSizeLimit {
+		return nil, &SDKError{
+			Message: fmt.Sprintf("File too large to upload: %s", options.FilePath),
+			Code:    ErrorCodeFileTooLarge,
 		}
 	}
 

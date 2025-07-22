@@ -6,11 +6,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"mime/multipart"
 	"net/http"
 	"net/url"
-	"os"
-	"path/filepath"
 	"time"
 )
 
@@ -102,77 +99,6 @@ func (c *httpClient) post(ctx context.Context, endpoint string, data interface{}
 		return nil, &SDKError{
 			Message: fmt.Sprintf("request failed: %v", err),
 			Code:    ErrorCodeServerError,
-		}
-	}
-	defer resp.Body.Close()
-
-	return handleResponse(resp)
-}
-
-// uploadFile performs a multipart/form-data POST request to upload a file
-func (c *httpClient) uploadFile(ctx context.Context, endpoint, filePath string) ([]byte, error) {
-	uploadURL := c.config.baseURL + endpoint
-
-	file, err := os.Open(filePath)
-	if err != nil {
-		return nil, &SDKError{
-			Message: fmt.Sprintf("failed to open file: %v", err),
-			Code:    ErrorCodeInvalidFile,
-		}
-	}
-	defer file.Close()
-
-	// Create a buffer to store the multipart form data
-	var buf bytes.Buffer
-	writer := multipart.NewWriter(&buf)
-
-	// Create the form file field
-	part, err := writer.CreateFormFile("file", filepath.Base(filePath))
-	if err != nil {
-		return nil, &SDKError{
-			Message: fmt.Sprintf("failed to create form file: %v", err),
-			Code:    ErrorCodeUnknownError,
-		}
-	}
-
-	// Copy the file content to the form field
-	_, err = io.Copy(part, file)
-	if err != nil {
-		return nil, &SDKError{
-			Message: fmt.Sprintf("failed to copy file content: %v", err),
-			Code:    ErrorCodeUnknownError,
-		}
-	}
-
-	// Close the multipart writer
-	err = writer.Close()
-	if err != nil {
-		return nil, &SDKError{
-			Message: fmt.Sprintf("failed to close multipart writer: %v", err),
-			Code:    ErrorCodeUnknownError,
-		}
-	}
-
-	// Create the request
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, uploadURL, &buf)
-	if err != nil {
-		return nil, &SDKError{
-			Message: fmt.Sprintf("failed to create request: %v", err),
-			Code:    ErrorCodeUnknownError,
-		}
-	}
-
-	// Set headers
-	req.Header.Set("X-API-KEY", c.config.apiKey)
-	req.Header.Set("Content-Type", writer.FormDataContentType())
-	req.Header.Set("Accept", "application/json")
-
-	// Send the request
-	resp, err := c.httpClient.Do(req)
-	if err != nil {
-		return nil, &SDKError{
-			Message: fmt.Sprintf("request failed: %v", err),
-			Code:    ErrorCodeUploadFailed,
 		}
 	}
 	defer resp.Body.Close()
