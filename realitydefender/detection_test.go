@@ -3,6 +3,7 @@ package realitydefender_test
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	realitydefender "github.com/Reality-Defender/realitydefender-sdk-go/realitydefender"
 	"net/http"
 	"net/http/httptest"
@@ -296,6 +297,146 @@ var _ = Describe("Detection Functions", func() {
 
 			// Verify we made exactly 3 requests (2 processing + 1 completed)
 			Expect(requestCount).To(Equal(3))
+		})
+	})
+})
+
+var _ = Describe("SupportedFileTypes", func() {
+	Context("when checking file type support", func() {
+		DescribeTable("file type validation",
+			func(extension string, expectedLimit int64, shouldBeSupported bool) {
+				var limit int64 = 0
+				found := false
+
+				for _, fileType := range realitydefender.SupportedFileTypes {
+					for _, supportedExt := range fileType.Extensions {
+						if supportedExt == extension {
+							limit = fileType.SizeLimit
+							found = true
+							break
+						}
+					}
+					if found {
+						break
+					}
+				}
+
+				Expect(found).To(Equal(shouldBeSupported))
+				if shouldBeSupported {
+					Expect(limit).To(Equal(expectedLimit))
+				}
+			},
+			Entry("mp4 video", ".mp4", int64(262144000), true),
+			Entry("mov video", ".mov", int64(262144000), true),
+			Entry("jpg image", ".jpg", int64(52428800), true),
+			Entry("png image", ".png", int64(52428800), true),
+			Entry("mp3 audio", ".mp3", int64(20971520), true),
+			Entry("txt file", ".txt", int64(5242880), true),
+			Entry("unsupported type", ".xyz", int64(0), false),
+		)
+	})
+})
+var _ = Describe("Client File Upload Validation", func() {
+	var (
+		client       *realitydefender.Client
+		mockServer   *httptest.Server
+		validTxtFile string
+		largeTxtFile string
+		invalidFile  string
+	)
+
+	BeforeEach(func() {
+		// Create mock HTTP server
+		mockServer = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			switch r.URL.Path {
+			case "/api/files/aws-presigned":
+				w.WriteHeader(http.StatusOK)
+				w.Write([]byte(`{
+					"code": "200",
+					"response": {
+						"signedUrl": "` + mockServer.URL + `/upload"
+					},
+					"errno": 0,
+					"mediaId": "test-media-id",
+					"requestId": "test-request-id"
+				}`))
+			case "/upload":
+				w.WriteHeader(http.StatusOK)
+			default:
+				w.WriteHeader(http.StatusNotFound)
+			}
+		}))
+
+		var err error
+		client, err = realitydefender.New(realitydefender.Config{
+			APIKey:  "test-key",
+			BaseURL: mockServer.URL,
+		})
+		Expect(err).NotTo(HaveOccurred())
+
+		// Create valid txt file
+		tmpFile, err := os.CreateTemp("", "valid*.txt")
+		Expect(err).NotTo(HaveOccurred())
+		_, err = tmpFile.WriteString("test content")
+		Expect(err).NotTo(HaveOccurred())
+		tmpFile.Close()
+		validTxtFile = tmpFile.Name()
+
+		// Create large txt file (over limit)
+		tmpFile, err = os.CreateTemp("", "large*.txt")
+		Expect(err).NotTo(HaveOccurred())
+		largeData := make([]byte, 5242881) // 1 byte over txt limit
+		_, err = tmpFile.Write(largeData)
+		Expect(err).NotTo(HaveOccurred())
+		tmpFile.Close()
+		largeTxtFile = tmpFile.Name()
+
+		// Create unsupported file type
+		tmpFile, err = os.CreateTemp("", "invalid*.xyz")
+		Expect(err).NotTo(HaveOccurred())
+		tmpFile.Close()
+		invalidFile = tmpFile.Name()
+	})
+
+	AfterEach(func() {
+		mockServer.Close()
+		os.Remove(validTxtFile)
+		os.Remove(largeTxtFile)
+		os.Remove(invalidFile)
+	})
+
+	Context("when uploading files", func() {
+		It("should reject unsupported file types", func() {
+			_, err := client.Upload(context.Background(), realitydefender.UploadOptions{
+				FilePath: invalidFile,
+			})
+
+			var sdkErr *realitydefender.SDKError
+			Expect(errors.As(err, &sdkErr)).To(BeTrue())
+			Expect(sdkErr.Code).To(Equal(realitydefender.ErrorCodeInvalidFile))
+			Expect(sdkErr.Message).To(ContainSubstring("Unsupported file type"))
+		})
+
+		It("should reject files that are too large", func() {
+			_, err := client.Upload(context.Background(), realitydefender.UploadOptions{
+				FilePath: largeTxtFile,
+			})
+
+			var sdkErr *realitydefender.SDKError
+			Expect(errors.As(err, &sdkErr)).To(BeTrue())
+			Expect(sdkErr.Code).To(Equal(realitydefender.ErrorCodeFileTooLarge))
+			Expect(sdkErr.Message).To(ContainSubstring("File too large to upload"))
+		})
+
+		It("should successfully upload valid files", func() {
+			result, err := client.Upload(context.Background(), realitydefender.UploadOptions{
+				FilePath: validTxtFile,
+			})
+
+			Expect(err).NotTo(HaveOccurred())
+			Expect(result).NotTo(BeNil())
+			Expect(result.RequestID).To(Equal("test-request-id"))
+			Expect(result.MediaID).To(Equal("test-media-id"))
 		})
 	})
 })
