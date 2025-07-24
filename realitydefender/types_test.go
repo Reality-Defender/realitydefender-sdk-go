@@ -272,7 +272,7 @@ var _ = Describe("Types and Structures", func() {
 				CurrentPage:           1,
 				Items: []realitydefender.DetectionResult{
 					{
-						RequestId: "test-request-id-1",
+						RequestID: "test-request-id-1",
 						Status:    "MANIPULATED",
 						Score:     &score1,
 						Models: []realitydefender.ModelResult{
@@ -284,7 +284,7 @@ var _ = Describe("Types and Structures", func() {
 						},
 					},
 					{
-						RequestId: "test-request-id-2",
+						RequestID: "test-request-id-2",
 						Status:    "ANALYZING",
 						Score:     nil,
 						Models: []realitydefender.ModelResult{
@@ -296,7 +296,7 @@ var _ = Describe("Types and Structures", func() {
 						},
 					},
 					{
-						RequestId: "test-request-id-3",
+						RequestID: "test-request-id-3",
 						Status:    "ERROR",
 						Score:     nil,
 						Models:    []realitydefender.ModelResult{},
@@ -323,21 +323,21 @@ var _ = Describe("Types and Structures", func() {
 			Expect(result.Items).To(HaveLen(3))
 
 			// Verify first item (completed)
-			Expect(result.Items[0].RequestId).To(Equal("test-request-id-1"))
+			Expect(result.Items[0].RequestID).To(Equal("test-request-id-1"))
 			Expect(result.Items[0].Status).To(Equal("MANIPULATED"))
 			Expect(result.Items[0].Score).NotTo(BeNil())
 			Expect(*result.Items[0].Score).To(Equal(0.85))
 			Expect(result.Items[0].Models).To(HaveLen(1))
 
 			// Verify second item (processing)
-			Expect(result.Items[1].RequestId).To(Equal("test-request-id-2"))
+			Expect(result.Items[1].RequestID).To(Equal("test-request-id-2"))
 			Expect(result.Items[1].Status).To(Equal("ANALYZING"))
 			Expect(result.Items[1].Score).To(BeNil())
 			Expect(result.Items[1].Models).To(HaveLen(1))
 			Expect(result.Items[1].Models[0].Score).To(BeNil())
 
 			// Verify third item (error)
-			Expect(result.Items[2].RequestId).To(Equal("test-request-id-3"))
+			Expect(result.Items[2].RequestID).To(Equal("test-request-id-3"))
 			Expect(result.Items[2].Status).To(Equal("ERROR"))
 			Expect(result.Items[2].Score).To(BeNil())
 			Expect(result.Items[2].Models).To(HaveLen(0))
@@ -409,7 +409,7 @@ var _ = Describe("Types and Structures", func() {
 				CurrentPage:           1,
 				Items: []realitydefender.DetectionResult{
 					{
-						RequestId: "test-request-id",
+						RequestID: "test-request-id",
 						Status:    "AUTHENTIC",
 						Score:     &score,
 						Models: []realitydefender.ModelResult{
@@ -440,7 +440,7 @@ var _ = Describe("Types and Structures", func() {
 
 			// Verify single item
 			Expect(result.Items).To(HaveLen(1))
-			Expect(result.Items[0].RequestId).To(Equal("test-request-id"))
+			Expect(result.Items[0].RequestID).To(Equal("test-request-id"))
 			Expect(result.Items[0].Status).To(Equal("AUTHENTIC"))
 			Expect(*result.Items[0].Score).To(Equal(0.75))
 			Expect(result.Items[0].Models).To(HaveLen(1))
