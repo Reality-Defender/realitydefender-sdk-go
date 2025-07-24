@@ -42,6 +42,8 @@ type ModelResult struct {
 
 // DetectionResult represents the simplified detection result returned to the user
 type DetectionResult struct {
+	// RequestId is the request ID that initiated the detection process
+	RequestId string `json:"requestId"`
 	// Status is the overall status determination (e.g., "MANIPULATED", "AUTHENTIC")
 	Status string `json:"status"`
 	// Score is the confidence score (0-1, nil if processing)
