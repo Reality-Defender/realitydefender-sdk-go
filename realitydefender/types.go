@@ -63,3 +63,10 @@ type DetectionResultList struct {
 	// Items is a slice containing the detection results for the current page.
 	Items []DetectionResult `json:"items"`
 }
+
+// Response represents a standard structure for API responses, including status codes, messages, and error details.
+type Response struct {
+	Code     string `json:"code"`
+	Response string `json:"response"`
+	ErrNo    int    `json:"errno"`
+}
