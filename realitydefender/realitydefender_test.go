@@ -237,6 +237,7 @@ var _ = Describe("RealityDefender SDK", func() {
 					"currentPage": 1,
 					"mediaList": [
 						{
+							"requestId": "test-request-id-1",
 							"resultsSummary": {
 								"status": "FAKE",
 								"metadata": {
@@ -252,6 +253,7 @@ var _ = Describe("RealityDefender SDK", func() {
 							]
 						},
 						{
+							"requestId": "test-request-id-2",
 							"resultsSummary": {
 								"status": "AUTHENTIC",
 								"metadata": {
@@ -278,6 +280,7 @@ var _ = Describe("RealityDefender SDK", func() {
 						"currentPage": 1,
 						"mediaList": [
 							{
+								"requestId": "test-request-id",
 								"resultsSummary": {
 									"status": "AUTHENTIC",
 									"metadata": {
@@ -536,6 +539,7 @@ var _ = Describe("RealityDefender SDK", func() {
 
 				// Verify first item
 				firstItem := result.Items[0]
+				Expect(firstItem.RequestID).To(Equal("test-request-id-1"))
 				Expect(firstItem.Status).To(Equal("MANIPULATED"))
 				Expect(firstItem.Score).NotTo(BeNil())
 				Expect(*firstItem.Score).To(Equal(0.95))
@@ -546,6 +550,7 @@ var _ = Describe("RealityDefender SDK", func() {
 
 				// Verify second item
 				secondItem := result.Items[1]
+				Expect(secondItem.RequestID).To(Equal("test-request-id-2"))
 				Expect(secondItem.Status).To(Equal("AUTHENTIC"))
 				Expect(secondItem.Score).NotTo(BeNil())
 				Expect(*secondItem.Score).To(Equal(0.95))
