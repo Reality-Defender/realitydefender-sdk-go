@@ -42,6 +42,8 @@ type ModelResult struct {
 
 // DetectionResult represents the simplified detection result returned to the user
 type DetectionResult struct {
+	// RequestID is the request ID that initiated the detection process
+	RequestID string `json:"requestId"`
 	// Status is the overall status determination (e.g., "MANIPULATED", "AUTHENTIC")
 	Status string `json:"status"`
 	// Score is the confidence score (0-1, nil if processing)
@@ -62,4 +64,11 @@ type DetectionResultList struct {
 	CurrentPage int `json:"current_page"`
 	// Items is a slice containing the detection results for the current page.
 	Items []DetectionResult `json:"items"`
+}
+
+// Response represents a standard structure for API responses, including status codes, messages, and error details.
+type Response struct {
+	Code     string `json:"code"`
+	Response string `json:"response"`
+	ErrNo    int    `json:"errno"`
 }

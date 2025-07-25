@@ -158,10 +158,28 @@ func handleResponse(resp *http.Response) ([]byte, error) {
 	var errorCode ErrorCode
 	var errorMessage string
 
+	// Try to extract error message from response body
+	var errorResp Response
+
+	err = json.Unmarshal(body, &errorResp)
+
 	switch resp.StatusCode {
+	case http.StatusBadRequest:
+		if errorResp != (Response{}) {
+			if errorResp.Code == "free-tier-not-allowed" {
+				errorCode = ErrorCodeUnauthorized
+				errorMessage = "Unauthorized: Paid plan required"
+			} else {
+				errorCode = ErrorCodeUnknownError
+				errorMessage = fmt.Sprintf("API error: %s", errorResp.Response)
+			}
+		} else {
+			errorCode = ErrorCodeUnknownError
+			errorMessage = fmt.Sprintf("Unknown error (HTTP %d)", resp.StatusCode)
+		}
 	case http.StatusUnauthorized:
 		errorCode = ErrorCodeUnauthorized
-		errorMessage = "Unauthorized: Invalid API key"
+		errorMessage = "Invalid API key"
 	case http.StatusNotFound:
 		errorCode = ErrorCodeNotFound
 		errorMessage = "Resource not found"
@@ -171,15 +189,6 @@ func handleResponse(resp *http.Response) ([]byte, error) {
 	default:
 		errorCode = ErrorCodeUnknownError
 		errorMessage = fmt.Sprintf("Unknown error (HTTP %d)", resp.StatusCode)
-	}
-
-	// Try to extract error message from response body
-	var errorResp struct {
-		Error string `json:"error"`
-	}
-
-	if err := json.Unmarshal(body, &errorResp); err == nil && errorResp.Error != "" {
-		errorMessage = errorResp.Error
 	}
 
 	return nil, &SDKError{

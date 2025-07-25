@@ -218,6 +218,8 @@ func uploadFile(ctx context.Context, client *httpClient, options UploadOptions) 
 // FormatResult formats the raw API response into a user-friendly result
 func FormatResult(response *MediaResponse) *DetectionResult {
 	// Extract the overall status and score
+	requestID := response.RequestID
+
 	status := response.ResultsSummary.Status
 
 	// Replace FAKE with MANIPULATED
@@ -264,9 +266,10 @@ func FormatResult(response *MediaResponse) *DetectionResult {
 	}
 
 	return &DetectionResult{
-		Status: status,
-		Score:  score,
-		Models: models,
+		RequestID: requestID,
+		Status:    status,
+		Score:     score,
+		Models:    models,
 	}
 }
 

@@ -119,7 +119,7 @@ var _ = Describe("HTTP Client", func() {
 		It("handles server error responses", func() {
 			server = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(http.StatusInternalServerError)
-				w.Write([]byte(`{"error":"Internal server error"}`))
+				w.Write([]byte(`{"code": "whatever", response":"Internal server error"}`))
 			}))
 
 			var err error
@@ -132,7 +132,7 @@ var _ = Describe("HTTP Client", func() {
 			ctx := context.Background()
 			result, err := client.GetResult(ctx, "test-endpoint", nil)
 			Expect(err).To(HaveOccurred())
-			Expect(err.Error()).To(ContainSubstring("Internal server error"))
+			Expect(err.Error()).To(ContainSubstring("Server error (Code: server_error)"))
 			Expect(result).To(BeNil())
 		})
 	})
@@ -230,4 +230,47 @@ var _ = Describe("HTTP Client", func() {
 			// We can't test the actual value since it's not exposed
 		})
 	})
+
+	It("handles free-tier-not-allowed error correctly", func() {
+		server = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte(`{"code":"free-tier-not-allowed","response":"Paid plan required"}`))
+		}))
+
+		var err error
+		client, err = realitydefender.New(realitydefender.Config{
+			APIKey:  "test-api-key",
+			BaseURL: server.URL,
+		})
+		Expect(err).NotTo(HaveOccurred())
+
+		ctx := context.Background()
+		result, err := client.GetResult(ctx, "test-endpoint", nil)
+
+		Expect(err).To(HaveOccurred())
+		Expect(err.Error()).To(ContainSubstring("Unauthorized: Paid plan required"))
+		Expect(result).To(BeNil())
+	})
+
+	It("handles other 400 errors with API error message", func() {
+		server = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte(`{"code":"invalid-parameter","response":"Invalid file format"}`))
+		}))
+
+		var err error
+		client, err = realitydefender.New(realitydefender.Config{
+			APIKey:  "test-api-key",
+			BaseURL: server.URL,
+		})
+		Expect(err).NotTo(HaveOccurred())
+
+		ctx := context.Background()
+		result, err := client.GetResult(ctx, "test-endpoint", nil)
+
+		Expect(err).To(HaveOccurred())
+		Expect(err.Error()).To(ContainSubstring("API error: Invalid file format"))
+		Expect(result).To(BeNil())
+	})
+
 })
