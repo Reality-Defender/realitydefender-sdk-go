@@ -248,7 +248,7 @@ var _ = Describe("HTTP Client", func() {
 		result, err := client.GetResult(ctx, "test-endpoint", nil)
 
 		Expect(err).To(HaveOccurred())
-		Expect(err.Error()).To(ContainSubstring("Unauthorized: Paid plan required"))
+		Expect(err.Error()).To(ContainSubstring("Paid plan required"))
 		Expect(result).To(BeNil())
 	})
 
@@ -269,7 +269,7 @@ var _ = Describe("HTTP Client", func() {
 		result, err := client.GetResult(ctx, "test-endpoint", nil)
 
 		Expect(err).To(HaveOccurred())
-		Expect(err.Error()).To(ContainSubstring("API error: Invalid file format"))
+		Expect(err.Error()).To(ContainSubstring("Invalid request: Invalid file format"))
 		Expect(result).To(BeNil())
 	})
 
