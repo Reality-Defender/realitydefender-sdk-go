@@ -166,16 +166,16 @@ func handleResponse(resp *http.Response) ([]byte, error) {
 	switch resp.StatusCode {
 	case http.StatusBadRequest:
 		if errorResp != (Response{}) {
-			if errorResp.Code == "free-tier-not-allowed" {
+			if errorResp.Code == "free-tier-not-allowed" || errorResp.Code == "upload-limit-reached" {
 				errorCode = ErrorCodeUnauthorized
-				errorMessage = "Unauthorized: Paid plan required"
+				errorMessage = errorResp.Response
 			} else {
-				errorCode = ErrorCodeUnknownError
-				errorMessage = fmt.Sprintf("API error: %s", errorResp.Response)
+				errorCode = ErrorCodeInvalidRequest
+				errorMessage = fmt.Sprintf("Invalid request: %s", errorResp.Response)
 			}
 		} else {
-			errorCode = ErrorCodeUnknownError
-			errorMessage = fmt.Sprintf("Unknown error (HTTP %d)", resp.StatusCode)
+			errorCode = ErrorCodeInvalidRequest
+			errorMessage = "Invalid request"
 		}
 	case http.StatusUnauthorized:
 		errorCode = ErrorCodeUnauthorized
@@ -187,8 +187,13 @@ func handleResponse(resp *http.Response) ([]byte, error) {
 		errorCode = ErrorCodeServerError
 		errorMessage = "Server error"
 	default:
-		errorCode = ErrorCodeUnknownError
-		errorMessage = fmt.Sprintf("Unknown error (HTTP %d)", resp.StatusCode)
+		if errorResp != (Response{}) {
+			errorCode = ErrorCodeServerError
+			errorMessage = fmt.Sprintf("API error: %s", errorResp.Response)
+		} else {
+			errorCode = ErrorCodeServerError
+			errorMessage = "API error: Unknown error"
+		}
 	}
 
 	return nil, &SDKError{
