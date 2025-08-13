@@ -11,7 +11,7 @@ jobs:
     with:
       is-release: true
     secrets:
-      codecov-token: ${{ secrets.CODECOV_TOKEN }}
+      inherit: true
 
   build-publish:
     needs: check-format-test
@@ -19,4 +19,4 @@ jobs:
     with:
       is-release: true
     secrets:
-      deploy-key: ${{ secrets.DEPLOY_KEY }}
+      inherit: true
