@@ -59,8 +59,8 @@ run-events:
 run-channels:
     cd examples/channels && go run main.go
 
-run-social:
-    cd examples/social && go run main.go
+run-social url:
+    cd examples/social && go run main.go {{ url }}
 
 run-results:
     cd examples/results && go run main.go
