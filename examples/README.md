@@ -49,6 +49,12 @@ Shows Go-idiomatic concurrent programming using:
 - Context cancellation support
 - Exponential backoff for polling
 
+### Social media analysis Example
+**Command:** `just run-social`
+**File:** `social/main.go`
+
+Shows how to analyze social media content.
+
 ### Retrieve results Example
 **Command:** `just run-results`
 **File:** `results/main.go`
