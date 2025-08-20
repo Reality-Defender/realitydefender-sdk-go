@@ -2,13 +2,14 @@ package realitydefender_test
 
 import (
 	"context"
-	realitydefender "github.com/Reality-Defender/realitydefender-sdk-go/realitydefender"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"time"
+
+	realitydefender "github.com/Reality-Defender/realitydefender-sdk-go/realitydefender"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"

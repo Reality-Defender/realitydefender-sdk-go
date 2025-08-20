@@ -127,6 +127,15 @@ func (c *Client) Upload(ctx context.Context, options UploadOptions) (*UploadResu
 	return result, nil
 }
 
+// UploadSocialMedia uploads a social media link to Reality Defender for analysis
+func (c *Client) UploadSocialMedia(ctx context.Context, options UploadSocialMediaOptions) (*UploadResult, error) {
+	result, err := uploadSocialMediaLink(ctx, c.httpClient, options)
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
 // GetResult gets the detection result for a specific request ID
 func (c *Client) GetResult(ctx context.Context, requestID string, options *GetResultOptions) (*DetectionResult, error) {
 	if options == nil {

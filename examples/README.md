@@ -13,7 +13,7 @@ Before running these examples, make sure you have:
    ```bash
    export REALITY_DEFENDER_API_KEY="your-api-key"
    ```
-4. **Test image** placed in the `examples/images/` directory as `test_image.jpg`
+4. **Test image** placed in the `examples/images/` directory as `test_image.jpg`, or an **URL** to media stored in a social media platform.
 
 ## Running Examples
 
@@ -48,6 +48,12 @@ Shows Go-idiomatic concurrent programming using:
 - Channels for result communication
 - Context cancellation support
 - Exponential backoff for polling
+
+### Social media analysis Example
+**Command:** `just run-social <URL>`
+**File:** `social/main.go`
+
+Shows how to analyze social media content.
 
 ### Retrieve results Example
 **Command:** `just run-results`

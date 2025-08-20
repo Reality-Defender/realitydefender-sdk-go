@@ -6,6 +6,12 @@ type UploadOptions struct {
 	FilePath string
 }
 
+// UploadSocialMediaOptions represents options for uploading social media
+type UploadSocialMediaOptions struct {
+	// SocialMediaLink is the URL of the social media to be analyzed
+	SocialLink string
+}
+
 // UploadResult represents the result of a successful upload
 type UploadResult struct {
 	// RequestID is the ID used to retrieve results
@@ -68,7 +74,8 @@ type DetectionResultList struct {
 
 // Response represents a standard structure for API responses, including status codes, messages, and error details.
 type Response struct {
-	Code     string `json:"code"`
-	Response string `json:"response"`
-	ErrNo    int    `json:"errno"`
+	Code      string  `json:"code"`
+	Response  string  `json:"response"`
+	ErrNo     int     `json:"errno"`
+	RequestID *string `json:"requestId"`
 }
