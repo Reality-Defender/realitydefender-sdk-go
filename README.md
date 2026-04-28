@@ -165,11 +165,11 @@ result, err := client.GetResult(ctx, uploadResult.RequestID, &realitydefender.Ge
 })
 ```
 
-### User feedback (V2)
+### User feedback
 
 ```go
 comment := "Optional note"
-fb, err := client.CreateUserFeedbackV2(ctx, realitydefender.CreateUserFeedbackV2Options{
+fb, err := client.CreateUserFeedback(ctx, realitydefender.CreateUserFeedbackOptions{
     RequestID:        uploadResult.RequestID,
     Label:            "REAL",
     FeedbackCategory: "CONFIRMATION",
@@ -177,10 +177,10 @@ fb, err := client.CreateUserFeedbackV2(ctx, realitydefender.CreateUserFeedbackV2
 })
 ```
 
-Returns `(*UserFeedbackV2, error)`. `UserFeedbackV2` is:
+Returns `(*UserFeedback, error)`. `UserFeedback` is:
 
 ```go
-type UserFeedbackV2 struct {
+type UserFeedback struct {
     ID             string `json:"id,omitempty"`             // Created feedback record id
     UserID         string `json:"userId,omitempty"`         // Authenticated user id
     RequestID      string `json:"requestId,omitempty"`       // Media / detection request id

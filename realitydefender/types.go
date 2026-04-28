@@ -80,8 +80,8 @@ type Response struct {
 	RequestID *string `json:"requestId"`
 }
 
-// CreateUserFeedbackV2Options configures POST /api/v2/user-feedback.
-type CreateUserFeedbackV2Options struct {
+// CreateUserFeedbackOptions configures POST /api/v2/user-feedback.
+type CreateUserFeedbackOptions struct {
 	// RequestID is the media / detection result ID (required).
 	RequestID string
 	// Label is the content judgment: REAL, SYNTHETIC, MANIPULATED, UNKNOWN (required).
@@ -92,8 +92,8 @@ type CreateUserFeedbackV2Options struct {
 	Comment *string
 }
 
-// UserFeedbackV2 is the JSON body returned on successful feedback creation (201).
-type UserFeedbackV2 struct {
+// UserFeedback is the JSON body returned on successful feedback creation (201).
+type UserFeedback struct {
 	ID            string `json:"id,omitempty"`
 	UserID        string `json:"userId,omitempty"`
 	RequestID     string `json:"requestId,omitempty"`

@@ -6,16 +6,16 @@ import (
 	"fmt"
 )
 
-const userFeedbackV2Endpoint = "/api/v2/user-feedback"
+const userFeedbackEndpoint = "/api/v2/user-feedback"
 
-type userFeedbackV2Payload struct {
+type userFeedbackPayload struct {
 	RequestID        string  `json:"requestId"`
 	Label            string  `json:"label"`
 	FeedbackCategory string  `json:"feedbackCategory"`
 	Comment          *string `json:"comment,omitempty"`
 }
 
-func createUserFeedbackV2(ctx context.Context, client *httpClient, opts CreateUserFeedbackV2Options) (*UserFeedbackV2, error) {
+func createUserFeedback(ctx context.Context, client *httpClient, opts CreateUserFeedbackOptions) (*UserFeedback, error) {
 	if opts.RequestID == "" || opts.Label == "" || opts.FeedbackCategory == "" {
 		return nil, &SDKError{
 			Message: "requestId, label, and feedbackCategory are required",
@@ -23,14 +23,14 @@ func createUserFeedbackV2(ctx context.Context, client *httpClient, opts CreateUs
 		}
 	}
 
-	payload := userFeedbackV2Payload{
+	payload := userFeedbackPayload{
 		RequestID:        opts.RequestID,
 		Label:            opts.Label,
 		FeedbackCategory: opts.FeedbackCategory,
 		Comment:          opts.Comment,
 	}
 
-	responseData, err := client.post(ctx, userFeedbackV2Endpoint, payload)
+	responseData, err := client.post(ctx, userFeedbackEndpoint, payload)
 	if err != nil {
 		return nil, &SDKError{
 			Message: fmt.Sprintf("user feedback submission failed: %v", err),
@@ -38,7 +38,7 @@ func createUserFeedbackV2(ctx context.Context, client *httpClient, opts CreateUs
 		}
 	}
 
-	var out UserFeedbackV2
+	var out UserFeedback
 	if err := json.Unmarshal(responseData, &out); err != nil {
 		return nil, &SDKError{
 			Message: fmt.Sprintf("invalid response from user feedback API: %v", err),

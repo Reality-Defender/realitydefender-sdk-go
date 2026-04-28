@@ -13,7 +13,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("CreateUserFeedbackV2", func() {
+var _ = Describe("CreateUserFeedback", func() {
 	var (
 		server *httptest.Server
 		client *realitydefender.Client
@@ -54,7 +54,7 @@ var _ = Describe("CreateUserFeedbackV2", func() {
 
 		It("returns parsed user feedback on 201", func() {
 			ctx := context.Background()
-			out, err := client.CreateUserFeedbackV2(ctx, realitydefender.CreateUserFeedbackV2Options{
+			out, err := client.CreateUserFeedback(ctx, realitydefender.CreateUserFeedbackOptions{
 				RequestID:        "req-1",
 				Label:            "REAL",
 				FeedbackCategory: "CONFIRMATION",
@@ -86,7 +86,7 @@ var _ = Describe("CreateUserFeedbackV2", func() {
 			Expect(err).NotTo(HaveOccurred())
 
 			c := "note"
-			_, err = client.CreateUserFeedbackV2(context.Background(), realitydefender.CreateUserFeedbackV2Options{
+			_, err = client.CreateUserFeedback(context.Background(), realitydefender.CreateUserFeedbackOptions{
 				RequestID:        "req-2",
 				Label:            "REAL",
 				FeedbackCategory: "OTHER",
@@ -110,7 +110,7 @@ var _ = Describe("CreateUserFeedbackV2", func() {
 		})
 
 		It("returns invalid_request when requestId is empty", func() {
-			_, err := client.CreateUserFeedbackV2(context.Background(), realitydefender.CreateUserFeedbackV2Options{
+			_, err := client.CreateUserFeedback(context.Background(), realitydefender.CreateUserFeedbackOptions{
 				Label:            "REAL",
 				FeedbackCategory: "CONFIRMATION",
 			})
