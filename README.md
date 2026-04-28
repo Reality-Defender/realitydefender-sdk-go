@@ -144,7 +144,7 @@ func main() {
 ```go
 client, err := realitydefender.New(realitydefender.Config{
     APIKey: "your-api-key",
-    BaseURL: "https://api.dev.realitydefender.xyz", // Optional, defaults to production
+    // BaseURL is optional; omit it to use production (https://api.prd.realitydefender.xyz).
 })
 ```
 
@@ -163,6 +163,39 @@ result, err := client.GetResult(ctx, uploadResult.RequestID, &realitydefender.Ge
     MaxAttempts: 30,          // Optional, defaults to 30
     PollingInterval: 2000,    // Optional, defaults to 2000ms
 })
+```
+
+### User feedback (V2)
+
+```go
+comment := "Optional note"
+fb, err := client.CreateUserFeedbackV2(ctx, realitydefender.CreateUserFeedbackV2Options{
+    RequestID:        uploadResult.RequestID,
+    Label:            "REAL",
+    FeedbackCategory: "CONFIRMATION",
+    Comment:          &comment,
+})
+```
+
+Returns `(*UserFeedbackV2, error)`. `UserFeedbackV2` is:
+
+```go
+type UserFeedbackV2 struct {
+    ID             string `json:"id,omitempty"`             // Created feedback record id
+    UserID         string `json:"userId,omitempty"`         // Authenticated user id
+    RequestID      string `json:"requestId,omitempty"`       // Media / detection request id
+    InstitutionID  string `json:"institutionId,omitempty"`  // Organization id
+    Text           string `json:"text,omitempty"`           // Comment body if sent in request
+    Category       string `json:"category,omitempty"`       // Stored feedbackCategory
+    UserName       string `json:"userName,omitempty"`       // Display name when present
+    UserEmail      string `json:"userEmail,omitempty"`       // Email when present
+    OrgName        string `json:"orgName,omitempty"`         // Organization name when present
+    MediaType      string `json:"mediaType,omitempty"`       // e.g. VIDEO, IMAGE when present
+    MediaViewURL   string `json:"mediaViewUrl,omitempty"`    // Link to result in web app when present
+    MediaSource    string `json:"mediaSource,omitempty"`     // e.g. file upload or API source label
+    Label          string `json:"label,omitempty"`           // REAL, SYNTHETIC, MANIPULATED, UNKNOWN
+    CreatedAt      string `json:"createdAt,omitempty"`       // Serialized timestamp when present
+}
 ```
 
 ### Poll for Results (Event-Based)
