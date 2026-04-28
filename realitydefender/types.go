@@ -94,18 +94,18 @@ type CreateUserFeedbackV2Options struct {
 
 // UserFeedbackV2 is the JSON body returned on successful feedback creation (201).
 type UserFeedbackV2 struct {
-	ID             string `json:"id,omitempty"`
-	UserID         string `json:"userId,omitempty"`
-	RequestID      string `json:"requestId,omitempty"`
-	InstitutionID  string `json:"institutionId,omitempty"`
-	Text           string `json:"text,omitempty"`
-	Category       string `json:"category,omitempty"`
-	UserName       string `json:"userName,omitempty"`
-	UserEmail      string `json:"userEmail,omitempty"`
-	OrgName        string `json:"orgName,omitempty"`
-	MediaType      string `json:"mediaType,omitempty"`
-	MediaViewURL   string `json:"mediaViewUrl,omitempty"`
-	MediaSource    string `json:"mediaSource,omitempty"`
-	Label          string `json:"label,omitempty"`
-	CreatedAt      string `json:"createdAt,omitempty"`
+	ID            string `json:"id,omitempty"`
+	UserID        string `json:"userId,omitempty"`
+	RequestID     string `json:"requestId,omitempty"`
+	InstitutionID string `json:"institutionId,omitempty"`
+	Text          string `json:"text,omitempty"`
+	Category      string `json:"category,omitempty"`
+	UserName      string `json:"userName,omitempty"`
+	UserEmail     string `json:"userEmail,omitempty"`
+	OrgName       string `json:"orgName,omitempty"`
+	MediaType     string `json:"mediaType,omitempty"`
+	MediaViewURL  string `json:"mediaViewUrl,omitempty"`
+	MediaSource   string `json:"mediaSource,omitempty"`
+	Label         string `json:"label,omitempty"`
+	CreatedAt     string `json:"createdAt,omitempty"`
 }
