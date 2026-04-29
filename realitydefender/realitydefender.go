@@ -136,6 +136,11 @@ func (c *Client) UploadSocialMedia(ctx context.Context, options UploadSocialMedi
 	return result, nil
 }
 
+// CreateUserFeedback submits user scan feedback (POST /api/v2/user-feedback).
+func (c *Client) CreateUserFeedback(ctx context.Context, opts CreateUserFeedbackOptions) (*UserFeedback, error) {
+	return createUserFeedback(ctx, c.httpClient, opts)
+}
+
 // GetResult gets the detection result for a specific request ID
 func (c *Client) GetResult(ctx context.Context, requestID string, options *GetResultOptions) (*DetectionResult, error) {
 	if options == nil {

@@ -79,3 +79,33 @@ type Response struct {
 	ErrNo     int     `json:"errno"`
 	RequestID *string `json:"requestId"`
 }
+
+// CreateUserFeedbackOptions configures POST /api/v2/user-feedback.
+type CreateUserFeedbackOptions struct {
+	// RequestID is the media / detection result ID (required).
+	RequestID string
+	// Label is the content judgment: REAL, SYNTHETIC, MANIPULATED, UNKNOWN (required).
+	Label string
+	// FeedbackCategory is one of FALSE_POSITIVE, FALSE_NEGATIVE, CONFIRMATION, OTHER (required).
+	FeedbackCategory string
+	// Comment is optional free text.
+	Comment *string
+}
+
+// UserFeedback is the JSON body returned on successful feedback creation (201).
+type UserFeedback struct {
+	ID            string `json:"id,omitempty"`
+	UserID        string `json:"userId,omitempty"`
+	RequestID     string `json:"requestId,omitempty"`
+	InstitutionID string `json:"institutionId,omitempty"`
+	Text          string `json:"text,omitempty"`
+	Category      string `json:"category,omitempty"`
+	UserName      string `json:"userName,omitempty"`
+	UserEmail     string `json:"userEmail,omitempty"`
+	OrgName       string `json:"orgName,omitempty"`
+	MediaType     string `json:"mediaType,omitempty"`
+	MediaViewURL  string `json:"mediaViewUrl,omitempty"`
+	MediaSource   string `json:"mediaSource,omitempty"`
+	Label         string `json:"label,omitempty"`
+	CreatedAt     string `json:"createdAt,omitempty"`
+}
