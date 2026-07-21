@@ -272,28 +272,28 @@ func FormatResult(response *MediaResponse) *DetectionResult {
 		Status:    status,
 		Score:     score,
 		Models:    models,
-		Heatmaps:  extractHeatmaps(response),
+		Heatmaps:  extractHeatmaps(response.MediaType, response.Heatmaps, models),
 	}
 }
 
 // extractHeatmaps returns heatmap URLs for IMAGE media only, matching UI
-// availability: non-ensemble models with API status FAKE and a non-empty
+// availability: non-ensemble models with status MANIPULATED and a non-empty
 // pre-signed URL.
-func extractHeatmaps(response *MediaResponse) map[string]string {
-	if response == nil || strings.ToUpper(response.MediaType) != "IMAGE" || len(response.Heatmaps) == 0 {
+func extractHeatmaps(mediaType string, heatmaps map[string]string, models []ModelResult) map[string]string {
+	if strings.ToUpper(mediaType) != "IMAGE" || len(heatmaps) == 0 {
 		return nil
 	}
 
 	artificialNames := make(map[string]struct{})
-	for _, model := range response.Models {
-		if model.Status != "FAKE" || strings.Contains(strings.ToLower(model.Name), "ensemble") {
+	for _, model := range models {
+		if model.Status != "MANIPULATED" || strings.Contains(strings.ToLower(model.Name), "ensemble") {
 			continue
 		}
 		artificialNames[model.Name] = struct{}{}
 	}
 
 	usable := make(map[string]string)
-	for name, url := range response.Heatmaps {
+	for name, url := range heatmaps {
 		if url == "" {
 			continue
 		}
