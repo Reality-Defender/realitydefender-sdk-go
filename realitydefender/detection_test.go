@@ -298,6 +298,98 @@ var _ = Describe("Detection Functions", func() {
 			// Verify we made exactly 3 requests (2 processing + 1 completed)
 			Expect(requestCount).To(Equal(3))
 		})
+
+		It("includes heatmaps only for artificial non-ensemble IMAGE models", func() {
+			server = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				w.WriteHeader(http.StatusOK)
+				w.Write([]byte(`{
+					"requestId": "test-request-id",
+					"mediaType": "IMAGE",
+					"resultsSummary": {
+						"status": "FAKE",
+						"metadata": {
+							"finalScore": 0.95
+						}
+					},
+					"models": [
+						{
+							"name": "rd-cedar-img",
+							"status": "FAKE",
+							"finalScore": 0.95
+						},
+						{
+							"name": "rd-elm-img",
+							"status": "AUTHENTIC",
+							"finalScore": 0.1
+						},
+						{
+							"name": "rd-img-ensemble",
+							"status": "FAKE",
+							"finalScore": 0.95
+						}
+					],
+					"heatmaps": {
+						"rd-cedar-img": "https://example.com/heatmap.png",
+						"rd-elm-img": "https://example.com/authentic.png",
+						"rd-img-ensemble": "https://example.com/ensemble.png"
+					}
+				}`))
+			}))
+
+			var err error
+			client, err = realitydefender.New(realitydefender.Config{
+				APIKey:  "test-api-key",
+				BaseURL: server.URL,
+			})
+			Expect(err).NotTo(HaveOccurred())
+
+			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+			defer cancel()
+
+			result, err := client.GetResult(ctx, "test-request-id", &realitydefender.GetResultOptions{
+				MaxAttempts: 1,
+			})
+			Expect(err).NotTo(HaveOccurred())
+			Expect(result.Heatmaps).To(HaveKeyWithValue("rd-cedar-img", "https://example.com/heatmap.png"))
+			Expect(result.Heatmaps).NotTo(HaveKey("rd-elm-img"))
+			Expect(result.Heatmaps).NotTo(HaveKey("rd-img-ensemble"))
+		})
+
+		It("ignores heatmaps for non-IMAGE media", func() {
+			server = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				w.WriteHeader(http.StatusOK)
+				w.Write([]byte(`{
+					"requestId": "test-request-id",
+					"mediaType": "VIDEO",
+					"resultsSummary": {
+						"status": "FAKE",
+						"metadata": {
+							"finalScore": 0.95
+						}
+					},
+					"models": [],
+					"heatmaps": {
+						"rd-vid-ensemble": "https://example.com/heatmap.png"
+					}
+				}`))
+			}))
+
+			var err error
+			client, err = realitydefender.New(realitydefender.Config{
+				APIKey:  "test-api-key",
+				BaseURL: server.URL,
+			})
+			Expect(err).NotTo(HaveOccurred())
+
+			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+			defer cancel()
+
+			result, err := client.GetResult(ctx, "test-request-id", &realitydefender.GetResultOptions{
+				MaxAttempts: 1,
+			})
+			Expect(err).NotTo(HaveOccurred())
+			Expect(result.Heatmaps).To(BeNil())
+		})
 	})
 })
 
