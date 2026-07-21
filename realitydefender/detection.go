@@ -217,7 +217,7 @@ func uploadFile(ctx context.Context, client *httpClient, options UploadOptions) 
 }
 
 // FormatResult formats the raw API response into a user-friendly result.
-// Visualization asset fields are copied when the API provides non-empty values.
+// Heatmaps are included for IMAGE media when filtered to artificial non-ensemble models.
 func FormatResult(response *MediaResponse) *DetectionResult {
 	// Extract the overall status and score
 	requestID := response.RequestID
@@ -277,8 +277,8 @@ func FormatResult(response *MediaResponse) *DetectionResult {
 }
 
 // extractHeatmaps returns heatmap URLs for IMAGE media only, matching UI
-// availability: non-ensemble models with an artificial result (API status FAKE)
-// and a non-empty pre-signed URL.
+// availability: non-ensemble models with API status FAKE and a non-empty
+// pre-signed URL.
 func extractHeatmaps(response *MediaResponse) map[string]string {
 	if response == nil || strings.ToUpper(response.MediaType) != "IMAGE" || len(response.Heatmaps) == 0 {
 		return nil
