@@ -165,6 +165,13 @@ result, err := client.GetResult(ctx, uploadResult.RequestID, &realitydefender.Ge
 })
 ```
 
+`DetectionResult` includes heatmaps for IMAGE media when a non-ensemble model returns an artificial result (API status `FAKE` / UI ARTIFICIAL). Pre-signed URLs expire after 15 minutes; otherwise `nil`:
+
+```go
+// IMAGE heatmaps: model slug → pre-signed PNG URL
+fmt.Println(result.Heatmaps)
+```
+
 ### User feedback
 
 ```go

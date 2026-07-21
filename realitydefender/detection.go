@@ -79,6 +79,7 @@ type MediaResponse struct {
 		Data       interface{} `json:"data"`
 		Code       string      `json:"code,omitempty"`
 	} `json:"models"`
+	Heatmaps map[string]string `json:"heatmaps,omitempty"`
 }
 
 // AllMediaResponse represents a paginated response containing a list of media and related metadata.
@@ -215,7 +216,8 @@ func uploadFile(ctx context.Context, client *httpClient, options UploadOptions) 
 	}, nil
 }
 
-// FormatResult formats the raw API response into a user-friendly result
+// FormatResult formats the raw API response into a user-friendly result.
+// Heatmaps are included for IMAGE media when filtered to artificial non-ensemble models.
 func FormatResult(response *MediaResponse) *DetectionResult {
 	// Extract the overall status and score
 	requestID := response.RequestID
@@ -270,7 +272,39 @@ func FormatResult(response *MediaResponse) *DetectionResult {
 		Status:    status,
 		Score:     score,
 		Models:    models,
+		Heatmaps:  extractHeatmaps(response.MediaType, response.Heatmaps, models),
 	}
+}
+
+// extractHeatmaps returns heatmap URLs for IMAGE media only, matching UI
+// availability: non-ensemble models with status MANIPULATED and a non-empty
+// pre-signed URL.
+func extractHeatmaps(mediaType string, heatmaps map[string]string, models []ModelResult) map[string]string {
+	if strings.ToUpper(mediaType) != "IMAGE" || len(heatmaps) == 0 {
+		return nil
+	}
+
+	artificialNames := make(map[string]struct{})
+	for _, model := range models {
+		if model.Status != "MANIPULATED" || strings.Contains(strings.ToLower(model.Name), "ensemble") {
+			continue
+		}
+		artificialNames[model.Name] = struct{}{}
+	}
+
+	usable := make(map[string]string)
+	for name, url := range heatmaps {
+		if url == "" {
+			continue
+		}
+		if _, ok := artificialNames[name]; ok {
+			usable[name] = url
+		}
+	}
+	if len(usable) == 0 {
+		return nil
+	}
+	return usable
 }
 
 // formatResults converts an API response into a paginated list of formatted detection results.

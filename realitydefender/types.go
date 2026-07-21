@@ -56,6 +56,9 @@ type DetectionResult struct {
 	Score *float64 `json:"score"`
 	// Models contains results from individual detection models
 	Models []ModelResult `json:"models"`
+	// Heatmaps maps model slug to pre-signed PNG URL for IMAGE media.
+	// Only non-ensemble models with status MANIPULATED; nil otherwise.
+	Heatmaps map[string]string `json:"heatmaps,omitempty"`
 }
 
 // DetectionResultList represents a paginated list of detection results.
