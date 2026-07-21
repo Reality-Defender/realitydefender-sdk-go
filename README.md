@@ -172,8 +172,6 @@ result, err := client.GetResult(ctx, uploadResult.RequestID, &realitydefender.Ge
 fmt.Println(result.Heatmaps)
 ```
 
-For other media-detail fields (aggregation metadata, explainability, thumbnails, etc.), use the Media Detail API directly.
-
 ### User feedback
 
 ```go
