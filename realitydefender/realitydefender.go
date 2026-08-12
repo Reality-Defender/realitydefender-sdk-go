@@ -213,9 +213,8 @@ func (c *Client) pollForResults(ctx context.Context, requestID string, pollingIn
 				return err
 			}
 
-			// If the status is still ANALYZING and we haven't exceeded the timeout,
-			// continue polling after a delay
-			if result.Status == "ANALYZING" {
+			// If the status is still ANALYZING or DOWNLOADING and we haven't exceeded the timeout, continue polling after a delay
+			if result.Status == "ANALYZING" || result.Status == "DOWNLOADING" {
 				elapsed += pollingInterval
 				time.Sleep(time.Duration(pollingInterval) * time.Millisecond)
 			} else {

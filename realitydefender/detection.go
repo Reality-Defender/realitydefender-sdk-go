@@ -66,7 +66,7 @@ type MediaResponse struct {
 	UploadedDate     string `json:"uploadedDate"`
 	MediaType        string `json:"mediaType"`
 	OverallStatus    string `json:"overallStatus"`
-	ResultsSummary   struct {
+	ResultsSummary   *struct {
 		Status   string `json:"status"`
 		Metadata struct {
 			FinalScore *float64 `json:"finalScore"`
@@ -222,7 +222,10 @@ func FormatResult(response *MediaResponse) *DetectionResult {
 	// Extract the overall status and score
 	requestID := response.RequestID
 
-	status := response.ResultsSummary.Status
+	status := response.OverallStatus
+	if response.ResultsSummary != nil && response.ResultsSummary.Status != "" {
+		status = response.ResultsSummary.Status
+	}
 
 	// Replace FAKE with MANIPULATED
 	if status == "FAKE" {
@@ -231,7 +234,7 @@ func FormatResult(response *MediaResponse) *DetectionResult {
 
 	// Normalize score from 0-100 to 0-1 if needed
 	var score *float64
-	if response.ResultsSummary.Metadata.FinalScore != nil {
+	if response.ResultsSummary != nil && response.ResultsSummary.Metadata.FinalScore != nil {
 		normalizedScore := *response.ResultsSummary.Metadata.FinalScore
 		// If the score is greater than 1, assume it's on a 0-100 scale and normalize
 		if normalizedScore > 1 {
@@ -381,8 +384,8 @@ func getDetectionResult(ctx context.Context, client *httpClient, requestID strin
 		// Format the response into a DetectionResult
 		result := FormatResult(&mediaResponse)
 
-		// Check if we have a final result or still analyzing
-		isAnalyzing := result.Status == "ANALYZING"
+		// Check if we have a final result or still in progress
+		isInProgress := result.Status == "ANALYZING" || result.Status == "DOWNLOADING"
 
 		// Also check if all models are still analyzing or not applicable
 		allModelsAnalyzingOrNA := true
@@ -398,9 +401,9 @@ func getDetectionResult(ctx context.Context, client *httpClient, requestID strin
 			}
 		}
 
-		// Continue polling if overall status is ANALYZING or
+		// Continue polling if overall status is in progress, or
 		// if all models are either ANALYZING or NOT_APPLICABLE and at least one is ANALYZING
-		if isAnalyzing || (allModelsAnalyzingOrNA && hasAnalyzingModels) {
+		if isInProgress || (allModelsAnalyzingOrNA && hasAnalyzingModels) {
 			attempt++
 
 			// Check if we've reached max attempts
