@@ -106,6 +106,34 @@ func (c *httpClient) post(ctx context.Context, endpoint string, data interface{}
 	return handleResponse(resp)
 }
 
+// delete performs a DELETE request
+func (c *httpClient) delete(ctx context.Context, endpoint string) error {
+	deleteURL := c.config.baseURL + endpoint
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodDelete, deleteURL, nil)
+	if err != nil {
+		return &SDKError{
+			Message: fmt.Sprintf("failed to create request: %v", err),
+			Code:    ErrorCodeUnknownError,
+		}
+	}
+
+	req.Header.Set("X-API-KEY", c.config.apiKey)
+	req.Header.Set("Accept", "application/json")
+
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		return &SDKError{
+			Message: fmt.Sprintf("request failed: %v", err),
+			Code:    ErrorCodeServerError,
+		}
+	}
+	defer resp.Body.Close()
+
+	_, err = handleResponse(resp)
+	return err
+}
+
 // put performs a PUT request to upload data to the specified URL
 func (c *httpClient) put(ctx context.Context, url string, data []byte) error {
 	req, err := http.NewRequestWithContext(ctx, http.MethodPut, url, bytes.NewBuffer(data))
