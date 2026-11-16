@@ -7,12 +7,12 @@ import (
 
 const deleteMediaEndpoint = "/api/media"
 
-// DeleteRequest deletes a scan request (DELETE /api/media/{requestId}).
-func (c *Client) DeleteRequest(ctx context.Context, requestID string) error {
-	return deleteRequest(ctx, c.httpClient, requestID)
+// DeleteAnalysis deletes a scan analysis (DELETE /api/media/{requestId}).
+func (c *Client) DeleteAnalysis(ctx context.Context, requestID string) error {
+	return deleteAnalysis(ctx, c.httpClient, requestID)
 }
 
-func deleteRequest(ctx context.Context, client *httpClient, requestID string) error {
+func deleteAnalysis(ctx context.Context, client *httpClient, requestID string) error {
 	requestID = strings.TrimSpace(requestID)
 	if requestID == "" {
 		return &SDKError{

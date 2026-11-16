@@ -172,12 +172,12 @@ result, err := client.GetResult(ctx, uploadResult.RequestID, &realitydefender.Ge
 fmt.Println(result.Heatmaps)
 ```
 
-### Delete a request
+### Delete an analysis
 
-Deletes a scan (`DELETE /api/media/{requestId}`). The API responds with 204 No Content.
+Deletes a scan analysis (`DELETE /api/media/{requestId}`). The API responds with 204 No Content.
 
 ```go
-err = client.DeleteRequest(ctx, uploadResult.RequestID)
+err = client.DeleteAnalysis(ctx, uploadResult.RequestID)
 ```
 
 ### User feedback

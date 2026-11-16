@@ -11,7 +11,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("DeleteRequest", func() {
+var _ = Describe("DeleteAnalysis", func() {
 	var (
 		server *httptest.Server
 		client *realitydefender.Client
@@ -41,7 +41,7 @@ var _ = Describe("DeleteRequest", func() {
 		})
 
 		It("succeeds on 204 No Content", func() {
-			err := client.DeleteRequest(context.Background(), "req-1")
+			err := client.DeleteAnalysis(context.Background(), "req-1")
 			Expect(err).NotTo(HaveOccurred())
 		})
 	})
@@ -62,7 +62,7 @@ var _ = Describe("DeleteRequest", func() {
 		})
 
 		It("returns not_found", func() {
-			err := client.DeleteRequest(context.Background(), "missing")
+			err := client.DeleteAnalysis(context.Background(), "missing")
 			Expect(err).To(HaveOccurred())
 			sdkErr := err.(*realitydefender.SDKError)
 			Expect(sdkErr.Code).To(Equal(realitydefender.ErrorCodeNotFound))
@@ -84,7 +84,7 @@ var _ = Describe("DeleteRequest", func() {
 		})
 
 		It("returns invalid_request", func() {
-			err := client.DeleteRequest(context.Background(), "  ")
+			err := client.DeleteAnalysis(context.Background(), "  ")
 			Expect(err).To(HaveOccurred())
 			sdkErr := err.(*realitydefender.SDKError)
 			Expect(sdkErr.Code).To(Equal(realitydefender.ErrorCodeInvalidRequest))
